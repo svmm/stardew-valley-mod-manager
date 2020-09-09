@@ -7,10 +7,13 @@
 			"es5",
 			"dom",
 			"ES2015"
+		],
+		"types": [
+			"jest"
 		]
 	},
 	"include": [
-		"**/*.ts"
+		"**/*.spec.ts"
 	],
 	"exclude": [
 		"node_modules"
