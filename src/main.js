@@ -9,7 +9,7 @@ import { ModsServiceSymbol, createModsService } from './services/mods.service';
 
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {
-		navigator.serviceWorker.register('/service-worker.js');
+		navigator.serviceWorker.register('/stardew-valley-mod-manager/service-worker.js');
 	});
 }
 
