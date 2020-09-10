@@ -7,7 +7,7 @@ const workboxConfig = require('./workbox-config.js')
 export default {
 	input: './service-worker.js',
 	output: {
-		file: 'dist/service-worker.js',
+		file: 'docs/service-worker.js',
 		name: 'service-worker.js',
 		format: 'umd',
 		minifyInternalExports: true,

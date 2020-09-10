@@ -1,6 +1,5 @@
 {
 	"compilerOptions": {
-		"strict": true,
 		"baseUrl": "node_modules/",
 		"target": "es5",
 		"lib": [

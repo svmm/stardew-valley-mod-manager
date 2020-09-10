@@ -3,13 +3,18 @@
 </template>
 
 <script lang="ts">
+// Services
+import { useModsService } from './services/mods.service';
+
 export default {
 	name: 'App',
 	setup() {
-		const click = async () => {
-			const fileHandle = await window.showDirectoryPicker();
+		const { mods, getMods } = useModsService();
 
-			console.log(fileHandle, fileHandle.getEntries());
+		const click = async () => {
+			await getMods();
+
+			console.log(mods);
 		};
 
 		return {

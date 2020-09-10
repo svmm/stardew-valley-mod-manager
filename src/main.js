@@ -1,6 +1,11 @@
 import { createApp } from 'vue';
-import App from './App.vue';
 import './index.css';
+
+// Components
+import App from './App.vue';
+
+// Services
+import { ModsServiceSymbol, createModsService } from './services/mods.service';
 
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {
@@ -8,4 +13,8 @@ if ('serviceWorker' in navigator) {
 	});
 }
 
-createApp(App).mount('#app');
+const app = createApp(App)
+
+app.provide(ModsServiceSymbol, createModsService());
+
+app.mount('#app');
