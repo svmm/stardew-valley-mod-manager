@@ -1,4 +1,4 @@
 export default {
-	base: '',
+	base: '/stardew-valley-mod-manager',
 	outDir: 'docs',
 }
