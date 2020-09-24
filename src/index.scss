@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
+@font-face {
+	font-family: 'Stardew Valley';
+	src: url('/fonts/Stardew Valley.woff') format('woff'),
+		 url('/fonts/Stardew Valley.ttf') format('truetype');
+}
+
+$background-colour: #fbc571;
+$background-colour-darkened: darken($background-colour, 3%);
+$text-colour: #56160c;
+
+* {
+    box-sizing: border-box;
+	font-family: 'Stardew Valley';
+	cursor: url('/images/sprites/cursor/cursor_main.png'), auto;
+	font-size: 1.2rem;
+	text-shadow: -2px 3px 0 rgba(0,0,0,0.1);
+	color: $text-colour;
+}
+
+h1 {
+	font-size: 44px;
+}
+
+h2 {
+	font-size: 38px;
+}
+
+button {
+	background: linear-gradient(to bottom, $background-colour, $background-colour-darkened);
+	text-shadow: -1px 2px 0 rgba(0,0,0,0.2);
+	padding: 0.25rem 0.5rem;
+	border-radius: 3px;
+	border: 1px solid $text-colour;
+	box-shadow: 0 0 3px rgba(0,0,0,0.2);
+	font-weight: normal;
+	font-size: 1.4rem;
+}
+
+*:active {
+	cursor: url('/images/sprites/cursor/cursor_active.png'), auto;
+}
+
+html, body {
+	margin: 0;
+	font-size: 1.2rem;
+}

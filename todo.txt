@@ -1,0 +1,20 @@
+TODO:
+	- Make the app into feature based file system [Done]
+	- Add shared ui components [Done]
+	- Add design to make it look like SV
+	- Add tests for code n stuff [In Progress]
+	- Add web workers for all native API stuff
+	- Add file system service [In Progress]
+
+Features
+	- Download straight from Nexus
+	- Can tell you when mods are out of date
+	- Mod load order (? is this even possible)
+	- Mod profiles, loading/unloading of profiles of mods
+	- Launch game from webpage??????
+	- Create symlink / Be able to use program files mod location
+	- Add mod to profile by selecting a local zip file
+	- FAQ / Support page
+
+	Creating mod feature
+		We can use the xnbcli code to create a feature whereby people can easily package and create mods using a web gui.

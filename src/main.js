@@ -1,20 +1,24 @@
 import { createApp } from 'vue';
-import './index.css';
+
+// Styles
+import './index.scss';
 
 // Components
-import App from './App.vue';
+import SVMM from './stardew-valley-mod-manager.component.vue';
 
 // Services
-import { ModsServiceSymbol, createModsService } from './services/mods.service';
+import { ModsServiceSymbol, createModsService } from './mod-list/mod-list.service';
+import { ModalServiceSymbol, createModalService } from './shared/components/modal/modal.service';
 
-if ('serviceWorker' in navigator) {
-	window.addEventListener('load', () => {
-		navigator.serviceWorker.register('/stardew-valley-mod-manager/service-worker.js');
-	});
-}
+// if ('serviceWorker' in navigator) {
+// 	window.addEventListener('load', () => {
+// 		navigator.serviceWorker.register('/stardew-valley-mod-manager/service-worker.js');
+// 	});
+// }
 
-const app = createApp(App)
+const app = createApp(SVMM);
 
 app.provide(ModsServiceSymbol, createModsService());
+app.provide(ModalServiceSymbol, createModalService());
 
 app.mount('#app');

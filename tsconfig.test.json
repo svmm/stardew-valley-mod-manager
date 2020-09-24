@@ -1,12 +1,14 @@
 {
 	"compilerOptions": {
-		"strict": true,
 		"baseUrl": "node_modules/",
 		"target": "es5",
 		"lib": [
 			"es5",
+			"ES6",
 			"dom",
-			"ES2015"
+			"ES2015",
+			"ES2016",
+			"ESNext"
 		],
 		"types": [
 			"jest"

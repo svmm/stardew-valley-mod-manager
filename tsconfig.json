@@ -4,8 +4,11 @@
 		"target": "es5",
 		"lib": [
 			"es5",
+			"ES6",
 			"dom",
-			"ES2015"
+			"ES2015",
+			"ES2016",
+			"ESNext"
 		]
 	},
 	"include": [
