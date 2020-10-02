@@ -11,14 +11,15 @@
 </template>
 
 <script lang="ts">
-	import { ref, readonly } from 'vue';
-	import { useModalService } from './modal.service.ts';
+	import { ref, readonly, inject } from 'vue';
+
+	import { ModalService } from './modal.service';
 
 	export default {
 		name: 'modal',
 		props: ['name'],
 		setup(props: {name: string}) {
-			const { addModal } = useModalService();
+			const modalService: ModalService = inject('modalService');
 
 			const visible = ref(false);
 
@@ -30,7 +31,7 @@
 				visible.value = false;
 			}
 
-			addModal(props.name, {
+			modalService.addModal(props.name, {
 				show,
 				hide,
 			});
@@ -70,7 +71,7 @@
 
 		.modal {
 			position: relative;
-			z-index: 2;
+			z-index: 3;
 			height: auto;
 			width: 100%;
 			max-height: 90vh;

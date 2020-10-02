@@ -1,47 +1,42 @@
-import { reactive, readonly, Ref, ref, inject } from 'vue';
+import { reactive, readonly, toRaw, inject } from 'vue';
 
 // Services
 import { getFolder, deleteFolder } from '../core/services/file-system.service';
+import { ModService } from '../core/services/mod.service';
 
 // Intefaces
 import { Mod } from '../shared/interfaces/mod.interface';
 import { Directory } from '../shared/interfaces/Directory.interface';
 
-interface ModsService {
+interface ModsListService {
 	readonly mods: {
 		directories: any,
 		mods: {
 			[name: string]: Mod,
 		},
 	},
+	modDirectoryHandle: any,
 	getMods: () => void,
 	deleteMod: (fileHandle: any) => {}
 }
 
-export const createModsService = () => {
+export const createModsListService = () => {
 	const mods = reactive({
 		directories: {},
 		mods: {},
 	});
-	let modDirectoryHandle: any;
 
 	const getMods = async () => {
 		for (const key in mods.mods) delete mods.mods[key];
 		for (const key in mods.directories) delete mods.directories[key];
 
-		let files: Directory;
-
-		if (!modDirectoryHandle) {
-			files = await getFolder();
+		if (!ModService.modDirectory.value) {
+			ModService.setModDirectory(await getFolder());
 		} else {
-			files = await getFolder(modDirectoryHandle);
+			ModService.setModDirectory(await getFolder(ModService.modDirectory.value.handle));
 		}
 
-		modDirectoryHandle = files.handle;
-
-		console.log(files);
-
-		const sortedMods = sortFilesIntoMods(files);
+		const sortedMods = sortFilesIntoMods(ModService.modDirectory.value);
 
 		Object.assign(mods, sortedMods);
 	}
@@ -93,18 +88,15 @@ export const createModsService = () => {
 		await getMods();
 	}
 
-	const readFile = async (mod: string, fileName: string) => {
-
-	}
-
 	return {
 		mods: readonly(mods),
+		modDirectoryHandle: ModService.modDirectory.value,
 		sortFilesIntoMods,
 		getMods,
 		deleteMod,
 	}
 };
 
-export const ModsServiceSymbol = Symbol('mods');
+export const ModsListServiceSymbol = Symbol('ModListService');
 
-export const useModsService: () => ModsService = () => inject(ModsServiceSymbol);
+export const useModsListService: () => ModsListService = () => inject(ModsListServiceSymbol);
