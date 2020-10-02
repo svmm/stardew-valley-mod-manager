@@ -1,0 +1,14 @@
+{
+	"name":"Stardew Valley Mod Manager",
+	"short_name":"SVMM",
+	"description": "A PWA mod manager for Stardew Valley.",
+	"icons":
+	[
+		{"src":"/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},
+		{"src":"/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}
+	],
+	"theme_color":"#fbc571",
+	"background_color":"#fbc571",
+	"display":"fullscreen",
+	"start_url": "/"
+}

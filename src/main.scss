@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
+@font-face {
+	font-family: 'Stardew Valley';
+	src: url('/public/fonts/pixel/Stardew Valley.woff') format('woff'),
+		 url('/public/fonts/pixel/Stardew Valley.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'Stardew Valley Wood';
+	src: url('/public/fonts/wood/Stardew Valley.woff') format('woff'),
+		 url('/public/fonts/wood/Stardew Valley.oet') format('eot'),
+		 url('/public/fonts/wood/Stardew Valley.svg') format('svg');
+}
+
+$background-colour: #fbc571;
+$background-colour-darkened: darken($background-colour, 3%);
+$text-colour: #56160c;
+
+* {
+	font-family: 'Stardew Valley';
+	font-size: 1.2rem;
+	text-shadow: -2px 3px 0 rgba(0,0,0,0.1);
+	color: $text-colour;
+	box-sizing: border-box;
+}
+
+html, body {
+	margin: 0;
+}
+
+#app {
+	min-height: 100vh;
+	width: 100%;
+	background-image: url('/images/stardewPanorama.png');
+	background-position: center;
+	background-size: 100vw 100vh;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+	overflow: auto;
+}
+
+.btn {
+	/* background: linear-gradient(to bottom, #fbc571, #fbbf62); */
+	text-shadow: -1px 2px 0 rgba(0,0,0,0.2);
+	padding: 0.25rem 0.5rem;
+	border-radius: 3px;
+	border: 1px solid #56160c;
+	box-shadow: 0 0 3px rgba(0,0,0,0.2);
+	font-weight: normal;
+	font-size: 1.4rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.btn:hover {
+	background: #FAB038;
+}
+
+.btn .btn-icon {
+	background-size: 25px;
+	width: 25px;
+	height: 25px;
+	margin-right: 10px;
+	background-repeat: no-repeat;
+}
+
+.btn .btn-icon.chicken {
+	background-image: url('/images/sprites/icons/blue_chicken.png');
+}
+
+.btn .btn-icon.plus {
+	background-image: url('/images/sprites/icons/green_plus.png');
+}
+
+a {
+	text-decoration: none;
+}
+
+input[type="checkbox"] {
+	appearance: none;
+	border: 2px solid #56160c;
+	border-radius: 6px;
+	padding: 10px;
+	background-color: transparent;
+	box-shadow: 0 0 3px rgba(0,0,0,0.2);
+	outline: none;
+}
+
+input[type="checkbox"]:checked {
+	background-color: #56160c;
+}
+
+.panel {
+	border: 1px solid transparent;
+	border-image: url('/images/sprites/modal/container-border.png') 23 16 repeat;
+	border-image-outset: 5px 8px;
+	border-image-width: 23px;
+	background: #fbc571;
+	box-shadow: 0 0 1px 5px rgba(0,0,0,0.2) inset;
+}
+
+
+body {
+	cursor: url('/images/sprites/cursor/pointer.png'), pointer;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+}
+
+h1 {
+	font-size: 44px;
+}
+
+h2 {
+	font-size: 38px;
+}
+
+button, a {
+	&:hover {
+		cursor: url('/images/sprites/cursor/hover.png'), auto;
+	}
+
+	&:active {
+		cursor: url('/images/sprites/cursor/active.png'), auto;
+	}
+}
+
+html, body {
+	font-size: 1.2rem;
+}
