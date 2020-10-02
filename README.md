@@ -1,4 +1,4 @@
-# Stardew Valley Mod Manager
+# [Stardew Valley Mod Manager](https://svmm.github.io/stardew-valley-mod-manager/)
 ## A web-based mod manager for Stardew Valley
 ### Version 1.0
 
