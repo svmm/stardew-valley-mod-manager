@@ -9,7 +9,8 @@
 			"ES2015",
 			"ES2016",
 			"ESNext"
-		]
+		],
+		"experimentalDecorators": true
 	},
 	"include": [
 		"**/*.ts"

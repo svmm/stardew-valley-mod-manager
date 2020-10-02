@@ -7,18 +7,23 @@ import './index.scss';
 import SVMM from './stardew-valley-mod-manager.component.vue';
 
 // Services
-import { ModsServiceSymbol, createModsService } from './mod-list/mod-list.service';
-import { ModalServiceSymbol, createModalService } from './shared/components/modal/modal.service';
+import { ModsListServiceSymbol, createModsListService } from './mod-list/mod-list.service';
+import { ModService } from './core/services/mod.service';
 
-// if ('serviceWorker' in navigator) {
-// 	window.addEventListener('load', () => {
-// 		navigator.serviceWorker.register('/stardew-valley-mod-manager/service-worker.js');
-// 	});
-// }
+// Plugins
+import ModalPlugin from './shared/components/modal/modal.plugin';
+
+if ('serviceWorker' in navigator && window.location.hostname.includes('github')) {
+	window.addEventListener('load', () => {
+		navigator.serviceWorker.register('/stardew-valley-mod-manager/service-worker.js');
+	});
+}
 
 const app = createApp(SVMM);
 
-app.provide(ModsServiceSymbol, createModsService());
-app.provide(ModalServiceSymbol, createModalService());
+app.use(ModalPlugin);
+
+app.provide(ModsListServiceSymbol, createModsListService());
+app.provide(ModService.symbol, ModService);
 
 app.mount('#app');

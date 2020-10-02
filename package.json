@@ -10,7 +10,9 @@
 		"test:watch": "jest --watch"
 	},
 	"dependencies": {
+		"@lgrignon/zip.js": "^1.0.1",
 		"@types/jest": "^26.0.14",
+		"@types/zip.js": "^2.0.28",
 		"axios": "^0.20.0",
 		"native-file-system-adapter": "^0.1.0",
 		"vue": "^3.0.0",
