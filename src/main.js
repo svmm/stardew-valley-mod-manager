@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 
 // Styles
-import './index.scss';
+import './main.scss';
 
 // Components
 import SVMM from './stardew-valley-mod-manager.component.vue';
