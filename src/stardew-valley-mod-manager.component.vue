@@ -19,7 +19,6 @@
 
 	// Services
 	import { ZipService, ZipContentDirectory } from './core/services/zip.service';
-	import { getFolder } from './core/services/file-system.service';
 	import { ModService } from './core/services/mod.service';
 
 	import {

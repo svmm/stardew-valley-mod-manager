@@ -13,7 +13,8 @@
 		"types": [
 			"jest",
 			"@types/zip.js"
-		]
+		],
+		"experimentalDecorators": true
 	},
 	"include": [
 		"**/*.spec.ts"

@@ -38,7 +38,7 @@
 	import { defineComponent, SetupContext, computed, readonly } from 'vue';
 
 	// Services
-	import { useModsListService } from './mod-list.service';
+	import { ModListService } from './mod-list.service';
 	import { ModService } from '../core/services/mod.service';
 
 	// Web workers
@@ -57,15 +57,12 @@
 			'mod-list-bar': ModListBarComponent,
 		},
 		setup() {
-			const { mods, deleteMod } = useModsListService();
-
-
 			const onDeleteMod = async (mod: Mod) => {
-				deleteMod(mod);
+				ModService.deleteMod(mod);
 			}
 
 			const modList = computed(() => {
-				return Object.values(mods.mods);
+				return Object.values(ModService.mods.mods);
 			});
 
 			return {

@@ -2,15 +2,15 @@
 
 @font-face {
 	font-family: 'Stardew Valley';
-	src: url('/public/fonts/pixel/Stardew Valley.woff') format('woff'),
-		 url('/public/fonts/pixel/Stardew Valley.ttf') format('truetype');
+	src: url('/fonts/pixel/Stardew Valley.woff') format('woff'),
+		 url('/fonts/pixel/Stardew Valley.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: 'Stardew Valley Wood';
-	src: url('/public/fonts/wood/Stardew Valley.woff') format('woff'),
-		 url('/public/fonts/wood/Stardew Valley.oet') format('eot'),
-		 url('/public/fonts/wood/Stardew Valley.svg') format('svg');
+	src: url('/fonts/wood/Stardew Valley.woff') format('woff'),
+		 url('/fonts/wood/Stardew Valley.oet') format('eot'),
+		 url('/fonts/wood/Stardew Valley.svg') format('svg');
 }
 
 $background-colour: #fbc571;

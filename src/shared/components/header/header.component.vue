@@ -1,5 +1,8 @@
 <template>
 	<div class="header">
+		<div id="profile">
+			Test
+		</div>
 		<div class="seperator"></div>
 		<button class="btn" @click="$modalService.showModal('changelog')">
 			v1.0

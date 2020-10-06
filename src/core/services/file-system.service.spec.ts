@@ -1,10 +1,5 @@
-import { FileSystemHandle } from 'browser-nativefs';
-// import {
-// 	showDirectoryPicker,
-// } from 'native-file-system-adapter';
-
 // Services
-import { getDirectory } from './file-system.service';
+import { FileSystemService } from './file-system.service';
 
 interface FileStub {
 	name: string;
@@ -41,9 +36,13 @@ const directoryHandleStub = (name: string, entries: (FileStub | DirectoryStub)[]
 })
 
 describe('FileSystemService', () => {
+	afterEach(() => {
+		jest.resetAllMocks();
+	});
+
 	describe('getFolder', () => {
 		it('init', () => {
-			expect(getDirectory).toBeDefined();
+			expect(FileSystemService.getDirectory).toBeDefined();
 		});
 
 		it('Should return an object', async () => {
@@ -51,7 +50,7 @@ describe('FileSystemService', () => {
 				fileHandleStub('test'),
 			])
 
-			const response = await getDirectory(directoryHandle);
+			const response = await FileSystemService.getDirectory(directoryHandle);
 
 			expect(response).toBeDefined();
 			expect(response).toBeInstanceOf(Object);
@@ -67,7 +66,7 @@ describe('FileSystemService', () => {
 				]),
 			]);
 
-			const response = await getDirectory(directoryHandle);
+			const response = await FileSystemService.getDirectory(directoryHandle);
 
 			const [ directory1 ] = Object.values(response.directories);
 
@@ -91,7 +90,7 @@ describe('FileSystemService', () => {
 				fileHandleStub('test10'),
 			]);
 
-			const directory = await getDirectory(directoryHandle);
+			const directory = await FileSystemService.getDirectory(directoryHandle);
 
 			expect(Object.keys(directory.files)).toHaveLength(10);
 		});
@@ -99,9 +98,45 @@ describe('FileSystemService', () => {
 		it('A directory should have it\'s handle', async () => {
 			const directoryHandle = directoryHandleStub('parent');
 
-			const directory = await getDirectory(directoryHandle);
+			const directory = await FileSystemService.getDirectory(directoryHandle);
 
 			expect(directory.handle).toBeDefined();
+		});
+
+		it('Mod directories shouldn\'t recursively load all sub-folders by default when top level', async () => {
+			const spy_getFile = jest.spyOn(FileSystemService, 'getFile');
+			spy_getFile.mockImplementation(() => Promise.resolve(fileHandleStub('manifest.json')));
+
+			const directoryHandle = directoryHandleStub('parent', [
+				fileHandleStub('manifest.json'),
+				directoryHandleStub('assetFolder', [
+					directoryHandleStub('evenMoreAssets'),
+				]),
+			]);
+
+			const directory = await FileSystemService.getDirectory(directoryHandle);
+
+			expect(directory.directories.assetFolder.directories).toEqual({});
+		});
+
+		it('Mod directories shouldn\'t recursively load all sub-folders by default when 1st level', async () => {
+			const spy_getFile = jest.spyOn(FileSystemService, 'getFile');
+			spy_getFile.mockImplementation(directoryHandle => {
+				if (directoryHandle.name === 'storage') {
+					return Promise.resolve(fileHandleStub('manifest.json'))
+				}
+			});
+
+			const directoryHandle = directoryHandleStub('parent', [
+				directoryHandleStub('storage', [
+					fileHandleStub('manifest.json'),
+					directoryHandleStub('assets'),
+				]),
+			]);
+
+			const directory = await FileSystemService.getDirectory(directoryHandle);
+
+			expect(directory.directories.storage.directories.assets.directories).toEqual({});
 		});
 	});
 });

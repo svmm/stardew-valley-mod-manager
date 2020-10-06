@@ -28,15 +28,13 @@
 
 	// Services
 	import { ZipService, ZipContentDirectory } from '../../core/services/zip.service';
-	import { getFolder, deleteFolder } from '../../core/services/file-system.service';
+	import { FileSystemService } from '../../core/services/file-system.service';
 	import { ModService } from '../../core/services/mod.service';
-	import { useModsListService } from '../mod-list.service';
+	import { ModListService } from '../mod-list.service';
 
 	export default {
 		name: 'mod-list-bar',
 		setup() {
-			const { mods, getMods, deleteMod } = useModsListService();
-
 			const createDirectory = async (parentHandle, directory: ZipContentDirectory) => {
 				const newDirectoryHandle = await parentHandle.getDirectory(directory.name, {
 					create: true,
@@ -103,11 +101,11 @@
 					create: true,
 				});
 
-				await deleteFolder(directoryHandle, testDirectoryName);
+				await FileSystemService.deleteFolder(directoryHandle, testDirectoryName);
 			}
 
 			return {
-				getMods,
+				getMods: () => ModService.getMods(),
 				uploadZipFile,
 				modDirectory: ModService.modDirectory,
 			}
