@@ -6,7 +6,10 @@ TODO:
 	- Add web workers for all native API stuff [In Progress - not sure if possible at the moment, problems with libraries running in workers]
 	- Add file system service [In Progress]
 	- Add vue router to make expansion easier
-	- Make button icons global classes or something
+	- Make button icons global classes or something [Done]
+	- Progress bar for installing zip mods
+	- Alert messages, alert message when mod finishes uploading
+	- Refresh after uploading zip
 
 Features
 	- Download straight from Nexus
@@ -17,6 +20,7 @@ Features
 	- Create symlink / Be able to use program files mod location
 	- Add mod to profile by selecting a local zip file [MVP] [Done]
 	- FAQ / Support page [MVP]
+	- Add tour
 
 	Creating mod feature
 		We can use the xnbcli code to create a feature whereby people can easily package and create mods using a web gui.

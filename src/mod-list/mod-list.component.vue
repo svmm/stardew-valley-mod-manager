@@ -76,7 +76,7 @@
 
 <style lang="scss" scoped>
 	.mod-table {
-		padding: 1rem 0;
+		padding-top: 1rem;
 
 		.mod {
 			display: flex;
@@ -95,6 +95,7 @@
 				margin: 0;
 				padding: 10px;
 				font-size: 1.5rem;
+				text-align: left;
 			}
 
 			.post-controls {

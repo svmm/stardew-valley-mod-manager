@@ -1,9 +1,11 @@
+export interface ZipFile {
+	content: any;
+}
+
 export interface ZipContentDirectory {
 	name: string;
 	files: {
-		[filePath: string]: {
-			content: any,
-		}
+		[filePath: string]: ZipFile,
 	};
 	directories: {
 		[directoryPath: string]: ZipContentDirectory,
@@ -90,8 +92,9 @@ export class ZipService {
 
 			if (!entry.directory) {
 				let entryContent: string = await this.readEntryContent(entry);
+
 				nestedDirectory.files[fileName] = {
-					content: entryContent
+					content: entryContent,
 				};
 			}
 		}
@@ -100,7 +103,7 @@ export class ZipService {
 	}
 
 	public static readEntryContent(entry: zip.Entry): Promise<string> {
-		return new Promise<string>((resolve, reject) => {
+		return new Promise<string>(resolve => {
 			let writer;
 
 			switch(entry.filename.split('.')[1]) {

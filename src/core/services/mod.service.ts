@@ -11,17 +11,17 @@ import { ModDirectory } from '../../shared/interfaces/mod-directory.interface';
 
 @Injectable
 class ModServiceClass {
-	private _modDirectory: any = ref(null);
+	private _modDirectory: Ref<Directory> = ref(null);
 	public readonly mods = reactive({
 		directories: {},
 		mods: {},
 	});
 
-	public get modDirectory(): Ref<any> {
+	public get modDirectory(): Ref<Directory> {
 		return this._modDirectory;
 	}
 
-	public setModDirectory(directoryHandle): void {
+	public setModDirectory(directoryHandle: Directory): void {
 		this._modDirectory.value = directoryHandle;
 	}
 

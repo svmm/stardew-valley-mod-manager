@@ -12,7 +12,8 @@
 		],
 		"types": [
 			"jest",
-			"@types/zip.js"
+			"@types/zip.js",
+			"@types/wicg-file-system-access"
 		],
 		"experimentalDecorators": true
 	},

@@ -35,40 +35,6 @@
 	export default {
 		name: 'mod-list-bar',
 		setup() {
-			const createDirectory = async (parentHandle, directory: ZipContentDirectory) => {
-				const newDirectoryHandle = await parentHandle.getDirectory(directory.name, {
-					create: true,
-				});
-
-				const fileCreations: Promise<any>[] = [];
-				const directoryCreations: Promise<any>[] = [];
-
-				for (const [ fileName, file ] of Object.entries(directory.files)) {
-					fileCreations.push(new Promise( async resolve => {
-						const fileHandle = await newDirectoryHandle.getFile(fileName, {
-							create: true,
-						});
-
-						const fileStream = await fileHandle.createWritable({
-							keepExistingData: false,
-						});
-
-						await fileStream.write(new Blob([file.content]));
-
-						await fileStream.close();
-
-						resolve();
-					}));
-				}
-
-				for (const childDirectory of Object.values(directory.directories)) {
-					directoryCreations.push(createDirectory(newDirectoryHandle, childDirectory));
-				}
-
-				await Promise.all(fileCreations);
-				await Promise.all(directoryCreations);
-			}
-
 			const uploadZipFile = async () => {
 				const directory = ModService.modDirectory.value;
 
@@ -89,7 +55,7 @@
 
 					directoryToCreate.name = zipFile.name.split('.')[0];
 
-					await createDirectory(directory.handle, directoryToCreate);
+					await FileSystemService.populateDirectory(directory.handle, directoryToCreate);
 				} catch (e) {
 					console.log(e);
 				}
@@ -165,6 +131,7 @@
 			background-color: lighten(#342e37, 10%);
 			box-shadow: 0 0 0 1px rgba(0,0,0,0.1) inset;
 			transition: color background-color .2s ease;
+			text-align: left;
 
 			&:hover {
 				span.placeholder {

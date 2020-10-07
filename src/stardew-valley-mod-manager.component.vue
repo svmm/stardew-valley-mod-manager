@@ -2,12 +2,17 @@
 	<svmm-header />
 	<div class="container">
 		<div class="panel">
-			<h1>Stardew Valley Mod Manager</h1>
+			<h1>Welcome to the Stardew Valley Mod Manager!</h1>
+			<p>Hello and welcome farmer! Check out the wiki if you're new here.</p>
+		</div>
+	</div>
+	<div class="container space">
+		<div class="panel">
 			<mod-list></mod-list>
 		</div>
-		<!-- <div class="panel">
-			<h1>Load Order</h1>
-		</div> -->
+		<div class="panel">
+			<h2>Load Order</h2>
+		</div>
 	</div>
 </template>
 
@@ -103,18 +108,32 @@
 		align-content: center;
 		justify-content: space-between;
 
+		&:nth-child(2) {
+			.panel {
+				text-align: left;
+			}
+		}
+
+		&.space {
+			.panel {
+				&:first-child {
+					margin-right: 1.5rem;
+				}
+			}
+		}
+
 		.panel {
 			padding: 1rem;
 			flex-grow: 1;
-
-			&:first-child {
-				//margin-right: 1.5rem;
-			}
+			text-align: center;
 
 			h1 {
-				font-size: 3rem;
-				margin-bottom: 15px;
-				text-align: center;
+				margin-bottom: 1rem;
+			}
+
+			p {
+				font-size: 1.5rem;
+				margin: 0;
 			}
 
 			button {

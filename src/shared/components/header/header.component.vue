@@ -1,7 +1,8 @@
 <template>
 	<div class="header">
-		<div id="profile">
-			Test
+		<div id="profile-select">
+			<!-- <ProfileSelect></ProfileSelect> -->
+			Your current profile will show here
 		</div>
 		<div class="seperator"></div>
 		<button class="btn" @click="$modalService.showModal('changelog')">
@@ -48,6 +49,13 @@
 		justify-content: flex-start;
 		position: relative;
 		z-index: 2;
+
+		#profile-select {
+			background-color: #fbbf62;
+			border-radius: 3px;
+			border: none;
+			padding: 5px 1rem;
+		}
 
 		.seperator {
 			margin-left: auto;

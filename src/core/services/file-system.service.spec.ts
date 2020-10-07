@@ -1,39 +1,66 @@
 // Services
 import { FileSystemService } from './file-system.service';
 
-interface FileStub {
-	name: string;
-	isFile: boolean;
-	isDirectory: boolean;
-	getFile: () => any,
-}
+// Interfaces
+import { Directory } from '../../shared/interfaces/directory.interface';
 
-interface DirectoryStub {
-	name: string;
-	isFile: boolean;
-	isDirectory: boolean;
-	getEntries: () => (DirectoryStub | FileStub)[];
-}
-
-const fileHandleStub = (name: string, value: {
-	path: string,
-} = {path: 'test'}): FileStub => ({
+const fileHandleStub = (name: string, value: string = 'test'): FileSystemFileHandle => ({
 	name,
 	isFile: true,
 	isDirectory: false,
-	getFile() {
-		return value;
+	getFile(): any {
+		return Promise.resolve({
+			text() {
+				return Promise.resolve(value);
+			},
+		});
 	},
+	kind: 'file',
+
+	// Just to make the typings happy
+	createWritable: (): any => ({
+		write: jest.fn(),
+		close: jest.fn(),
+	}),
+	isSameEntry: (): any => {},
+	queryPermission: (): any => {},
+	requestPermission: (): any => {},
 });
 
-const directoryHandleStub = (name: string, entries: (FileStub | DirectoryStub)[] = []): DirectoryStub => ({
+const directoryHandleStub = (name: string, entries: (FileSystemFileHandle | FileSystemDirectoryHandle)[] = []): FileSystemDirectoryHandle => ({
 	name,
 	isFile: false,
 	isDirectory: true,
-	getEntries() {
+	getEntries(): any {
 		return entries;
 	},
-})
+	kind: 'directory',
+
+	// Just to make the typings happy
+	isSameEntry: (): any => {},
+	queryPermission: (): any => {},
+	requestPermission: (): any => {},
+	getDirectory: (): any => {},
+	entries: (): any => {},
+	getDirectoryHandle: (): any => {},
+	getFile: (): any => {},
+	getFileHandle: (): any => {},
+	keys: (): any => {},
+	removeEntry: (): any => {},
+	resolve: (): any => {},
+	values: (): any => {},
+	[Symbol.asyncIterator]: (): any => {},
+});
+
+type DirectoryOptions = Partial<{[key in keyof Directory]: Directory[key]}>;
+
+const directoryStub = (options: DirectoryOptions): Directory => ({
+	name: options?.name,
+	handle: options?.handle,
+	parentHandle: options?.parentHandle,
+	directories: options?.directories,
+	files: options?.files,
+});
 
 describe('FileSystemService', () => {
 	afterEach(() => {
@@ -138,5 +165,39 @@ describe('FileSystemService', () => {
 
 			expect(directory.directories.storage.directories.assets.directories).toEqual({});
 		});
+	});
+
+	describe('populateDirectory', () => {
+		it('Should correctly populate a directory using a fully qualified directory', async () => {
+			const output = {};
+
+			const file = fileHandleStub('manifest.json', 'hello world');
+			const spy_write = jest.fn(content => output[file.name] = content);
+			const spy_close = jest.fn(() => {});
+
+			jest.spyOn(file, 'createWritable').mockImplementation(() => Promise.resolve((<any>{
+				write: spy_write,
+				close: spy_close,
+			})));
+
+			jest.spyOn(FileSystemService, 'createFile').mockImplementation(() => Promise.resolve(file));
+			jest.spyOn(FileSystemService, 'createDirectory').mockImplementation(() => Promise.resolve(<any>{}));
+
+			const directoryToCopy = directoryStub({
+				name: 'parent',
+				directories: {},
+				files: {
+					'manifest.json': file,
+				},
+			});
+
+			await FileSystemService.populateDirectory(directoryHandleStub('parent'), directoryToCopy);
+
+			expect(output['manifest.json']).toBeDefined();
+		});
+	});
+
+	describe('copyFolder', () => {
+
 	});
 });

@@ -1,15 +1,11 @@
-export interface FileWithRelativePath extends File {
-	webkitRelativepath: string;
-}
-
 export interface Directory {
 	name: string,
-	handle: any, // FileSystemDirectoryHandle?
-	parentHandle: any, // FileSystemDirectoryHandle?
+	handle: FileSystemDirectoryHandle,
+	parentHandle: FileSystemDirectoryHandle,
 	directories: {
 		[key: string]: Directory,
 	},
 	files: {
-		[key: string]: FileWithRelativePath
+		[key: string]: FileSystemFileHandle,
 	},
 }
