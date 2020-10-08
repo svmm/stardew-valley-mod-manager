@@ -19,8 +19,9 @@ Features
 	- Launch game from webpage??????
 	- Create symlink / Be able to use program files mod location
 	- Add mod to profile by selecting a local zip file [MVP] [Done]
+	- Marking installed mods as inactive [MVP] - This will pretty much just be part of the profiles work
 	- FAQ / Support page [MVP]
-	- Add tour
+	- Nice Tour feature
 
 	Creating mod feature
 		We can use the xnbcli code to create a feature whereby people can easily package and create mods using a web gui.

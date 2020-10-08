@@ -102,7 +102,7 @@
 	}
 
 	.container {
-		padding: 40px 15px 0;
+		padding: 40px 40px 0;
 		overflow: initial;
 		display: flex;
 		align-content: center;

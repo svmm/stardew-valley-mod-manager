@@ -1,9 +1,6 @@
 <template>
 	<div class="header">
-		<div id="profile-select">
-			<!-- <ProfileSelect></ProfileSelect> -->
-			Your current profile will show here
-		</div>
+		<profile-select></profile-select>
 		<div class="seperator"></div>
 		<button class="btn" @click="$modalService.showModal('changelog')">
 			v1.0
@@ -30,9 +27,18 @@
 <script lang="ts">
 	import { defineComponent } from 'vue';
 
+	// Components
+	import ProfileSelectComponent from '../profile/profile-select.component.vue';
+
+	// Services
+	import { ProfileService } from '../profile/profile.service';
+
 	// Service
 	export default defineComponent({
 		name: 'svmm-header',
+		components: {
+			'profile-select': ProfileSelectComponent,
+		},
 	});
 </script>
 
@@ -40,7 +46,7 @@
 	.header {
 		height: 50px;
 		width: 100%;
-		padding: 5px 15px;
+		padding: 5px 40px;
 		background: #342E37;
 		background-image: url('/images/sprites/header/stars.png');
 		box-shadow: 0 2px 0 1px rgba(0,0,0,0.1);
@@ -49,13 +55,6 @@
 		justify-content: flex-start;
 		position: relative;
 		z-index: 2;
-
-		#profile-select {
-			background-color: #fbbf62;
-			border-radius: 3px;
-			border: none;
-			padding: 5px 1rem;
-		}
 
 		.seperator {
 			margin-left: auto;

@@ -22,10 +22,6 @@
 </template>
 
 <script lang="ts">
-	import {
-		showOpenFilePicker,
-	} from 'native-file-system-adapter';
-
 	// Services
 	import { ZipService, ZipContentDirectory } from '../../core/services/zip.service';
 	import { FileSystemService } from '../../core/services/file-system.service';
@@ -39,7 +35,7 @@
 				const directory = ModService.modDirectory.value;
 
 				try {
-					const [ chosenZipFile ] = await showOpenFilePicker({
+					const [ chosenZipFile ] = await window.showOpenFilePicker({
 						accepts: [
 							{
 								extensions: ['.zip']
@@ -63,7 +59,8 @@
 
 			const getWritePermission = async (directoryHandle): Promise<void> => {
 				const testDirectoryName = 'SVMM-write-permission';
-				const newDirectoryHandle = await directoryHandle.getDirectory(testDirectoryName, {
+				console.log(directoryHandle);
+				const newDirectoryHandle = await directoryHandle.getDirectoryHandle(testDirectoryName, {
 					create: true,
 				});
 

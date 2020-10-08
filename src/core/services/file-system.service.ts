@@ -24,10 +24,10 @@ export class FileSystemService {
 
 		const isModDirectory = await this.getFile(directoryHandle, 'manifest.json');
 
-		for await (const entry of directoryHandle.getEntries()) {
-			if (entry.isFile) {
+		for await (const entry of directoryHandle.values()) {
+			if (entry.kind === 'file') {
 				directory.files[entry.name] = entry;
-			} else if (entry.isDirectory) {
+			} else if (entry.kind === 'directory') {
 				if (recursive) {
 					directory.directories[entry.name] = await this.getDirectory(entry, recursive, entry.name, parentHandle || directoryHandle);
 				}
@@ -67,7 +67,7 @@ export class FileSystemService {
 		let fileHandle: FileSystemFileHandle = null;
 
 		try {
-			fileHandle = await directoryHandle.getFile(filename, {
+			fileHandle = await directoryHandle.getFileHandle(filename, {
 				create,
 			});
 		} catch (e) {
@@ -147,7 +147,7 @@ export class FileSystemService {
 	 * Returns a newly created directory handle
 	 */
 	public static async createDirectory(parentDirectoryHandle: FileSystemDirectoryHandle, folderName: string): Promise<FileSystemDirectoryHandle> {
-		return parentDirectoryHandle.getDirectory(folderName, {
+		return parentDirectoryHandle.getDirectoryHandle(folderName, {
 			create: true,
 		});
 	}

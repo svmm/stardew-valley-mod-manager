@@ -31,6 +31,9 @@ const directoryHandleStub = (name: string, entries: (FileSystemFileHandle | File
 	name,
 	isFile: false,
 	isDirectory: true,
+	values(): any {
+		return entries;
+	},
 	getEntries(): any {
 		return entries;
 	},
@@ -48,7 +51,6 @@ const directoryHandleStub = (name: string, entries: (FileSystemFileHandle | File
 	keys: (): any => {},
 	removeEntry: (): any => {},
 	resolve: (): any => {},
-	values: (): any => {},
 	[Symbol.asyncIterator]: (): any => {},
 });
 
