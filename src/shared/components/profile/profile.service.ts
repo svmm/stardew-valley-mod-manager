@@ -60,8 +60,18 @@ export class ProfileService {
 		return ModService.modDirectory
 	}
 
-	public static async toggleModActive(mod: Mod): Promise<void> {
-		await FileSystemService.copyFolder(mod.directoryHandle, mod.parentDirectoryHandle, `.${ mod.directoryHandle.name }`);
+	public static async toggleMod(mod: Mod): Promise<void> {
+		await FileSystemService.requestPermission(mod.parentDirectoryHandle);
+
+		if (mod.active) {
+			await FileSystemService.copyFolder(mod.directoryHandle, mod.parentDirectoryHandle, `.${ mod.directoryHandle.name }`);
+			ModService.setModActiveStatus(mod, false);
+		} else {
+			await FileSystemService.copyFolder(mod.directoryHandle, mod.parentDirectoryHandle, `${ mod.name }`);
+			ModService.setModActiveStatus(mod, true);
+		}
+
 		await FileSystemService.deleteFolder(mod.parentDirectoryHandle, mod.directoryHandle.name);
+		await ModService.getMods();
 	}
 }

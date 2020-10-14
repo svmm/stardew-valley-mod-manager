@@ -34,37 +34,48 @@
 			const uploadZipFile = async () => {
 				const directory = ModService.modDirectory.value;
 
+				// const destinationDirectory = await FileSystemService.createDirectory(directory.handle, 'test')
+
+				// await FileSystemService.getHandles(destinationDirectory);
+
+				// return;
+
 				try {
 					const [ chosenZipFile ] = await window.showOpenFilePicker({
-						accepts: [
-							{
-								extensions: ['.zip']
-							}
-						],
+						// types: [
+						// 	{
+						// 		description: 'Zip files',
+						// 		accept: {
+						// 			'zip': ['.zip'],
+						// 		},
+						// 	},
+						// ],
 					});
+
+					// await FileSystemService.getHandles(directory.handle);
 
 					const zipFile = await chosenZipFile.getFile();
 
-					await getWritePermission(directory.handle);
+					// await FileSystemService.requestPermission(directory.handle);
 
-					const directoryToCreate = await ZipService.extract(zipFile);
+					const zipFolder = await ZipService.extract(zipFile);
 
-					directoryToCreate.name = zipFile.name.split('.')[0];
+					console.log('done unzipping')
 
-					await FileSystemService.populateDirectory(directory.handle, directoryToCreate);
+					zipFolder.name = zipFile.name.split('.')[0];
+
+					// const destinationDirectory = await FileSystemService.createDirectory(directory.handle, zipFolder.name)
+
+					console.log('created directory');
+
+					await FileSystemService.populateDirectoryArray(directory.handle, zipFolder);
+
+					console.log('done populating');
+
+					await ModService.getMods();
 				} catch (e) {
 					console.log(e);
 				}
-			}
-
-			const getWritePermission = async (directoryHandle): Promise<void> => {
-				const testDirectoryName = 'SVMM-write-permission';
-				console.log(directoryHandle);
-				const newDirectoryHandle = await directoryHandle.getDirectoryHandle(testDirectoryName, {
-					create: true,
-				});
-
-				await FileSystemService.deleteFolder(directoryHandle, testDirectoryName);
 			}
 
 			return {

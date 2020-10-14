@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"@lgrignon/zip.js": "^1.0.1",
+		"@transcend-io/conflux": "^3.2.0",
 		"@types/jest": "^26.0.14",
 		"@types/zip.js": "^2.0.28",
 		"axios": "^0.20.0",

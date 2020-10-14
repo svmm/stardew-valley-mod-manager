@@ -12,7 +12,13 @@
 					v-bind:key="mod.name"
 				>
 					<div class="controls pre-contols">
-						<input type="checkbox" :value="mod.name" :id="mod.name+'check'">
+						<input
+							@change.prevent="toggleMod(mod)"
+							type="checkbox"
+							:value="mod.name"
+							:id="mod.name+'check'"
+							:checked="mod.active"
+						>
 					</div>
 					<p class="mod-name">
 						<label :for="mod.name+'check'">
@@ -40,6 +46,7 @@
 	// Services
 	import { ModListService } from './mod-list.service';
 	import { ModService } from '../core/services/mod.service';
+	import { ProfileService } from '../shared/components/profile/profile.service';
 
 	// Web workers
 	// import myWorker from '../core/web-workers/file-system.service?worker';
@@ -65,9 +72,14 @@
 				return Object.values(ModService.mods.mods);
 			});
 
+			const toggleMod = async (mod: Mod) => {
+				await ProfileService.toggleMod(mod);
+			}
+
 			return {
 				mods: modList,
 				onDeleteMod,
+				toggleMod,
 				modDirectory: ModService.modDirectory,
 			}
 		},

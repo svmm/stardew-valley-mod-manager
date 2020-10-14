@@ -169,7 +169,132 @@ describe('FileSystemService', () => {
 		});
 	});
 
-	describe('populateDirectory', () => {
+	describe('getDirectoryArray', () => {
+		it('Should return an object with directory and file arrays', async () => {
+			const directory = directoryStub({
+				name: 'parent',
+				handle: directoryHandleStub('parent'),
+				parentHandle: null,
+				directories: {},
+				files: {},
+			});
+
+			const output = FileSystemService.getDirectoryArray(directory);
+
+			expect(output.files).toBeInstanceOf(Array);
+			expect(output.directories).toBeInstanceOf(Array);
+		});
+
+		it('Should return 2 directories in the array', async () => {
+			const directory = directoryStub({
+				name: 'parent',
+				handle: directoryHandleStub('parent'),
+				parentHandle: null,
+				directories: {
+					'child': directoryStub({
+						name: 'child',
+						handle: directoryHandleStub('child'),
+						parentHandle: null,
+						directories: {},
+						files: {},
+					}),
+				},
+				files: {},
+			});
+
+			const output = FileSystemService.getDirectoryArray(directory);
+
+			expect(output.directories).toHaveLength(2);
+		});
+
+		it('Should return 2 directories, second entry should have the name "child"', async () => {
+			const directory = directoryStub({
+				name: 'parent',
+				handle: directoryHandleStub('parent'),
+				parentHandle: null,
+				directories: {
+					'child': directoryStub({
+						name: 'child',
+						handle: directoryHandleStub('child'),
+						parentHandle: null,
+						directories: {},
+						files: {},
+					}),
+				},
+				files: {},
+			});
+
+			const output = FileSystemService.getDirectoryArray(directory);
+
+			const [ , childDirectory ] = output.directories;
+
+			expect(output.directories).toHaveLength(2);
+			expect(childDirectory.name).toBe('child');
+		});
+
+		it('Should return 1 file', async () => {
+			const directory = directoryStub({
+				name: 'parent',
+				handle: directoryHandleStub('parent'),
+				parentHandle: null,
+				directories: {},
+				files: {
+					'manifest.json': fileHandleStub('manifest.json'),
+				},
+			});
+
+			const output = FileSystemService.getDirectoryArray(directory);
+
+			const [ file ] = output.files;
+
+			expect(output.files).toHaveLength(1);
+			expect(file.name).toBe('manifest.json');
+		});
+
+		it('Child directories should have correct names', async () => {
+			const directory = directoryStub({
+				name: 'parent',
+				handle: directoryHandleStub('parent'),
+				parentHandle: null,
+				directories: {
+					'child1': directoryStub({
+						name: 'child1',
+						handle: directoryHandleStub('child1'),
+						parentHandle: null,
+						directories: {
+							'child2': directoryStub({
+								name: 'child2',
+								handle: directoryHandleStub('child2'),
+								parentHandle: null,
+								directories: {},
+								files: {},
+							}),
+						},
+						files: {},
+					}),
+				},
+				files: {},
+			});
+
+			const output = FileSystemService.getDirectoryArray(directory);
+
+			const [ parent, child1, child2 ] = output.directories;
+
+			expect(parent.name).toBe('parent');
+			expect(parent.parentDirectoryPath).toBe('');
+			expect(parent.directoryPath).toBe('parent');
+
+			expect(child1.name).toBe('child1');
+			expect(child1.parentDirectoryPath).toBe('parent');
+			expect(child1.directoryPath).toBe('parent/child1');
+
+			expect(child2.name).toBe('child2');
+			expect(child2.parentDirectoryPath).toBe('parent/child1');
+			expect(child2.directoryPath).toBe('parent/child1/child2');
+		});
+	});
+
+	xdescribe('populateDirectory', () => {
 		it('Should correctly populate a directory using a fully qualified directory', async () => {
 			const output = {};
 

@@ -1,10 +1,19 @@
-// Intefaces
-import { Directory } from '../../shared/interfaces/directory.interface';
+// Interfaces
+import { Directory, DirectoryArray, FileArray } from '../../shared/interfaces/directory.interface';
 
 // Services
 import { ZipContentDirectory, ZipFile } from './zip.service';
+import { chunkArray } from '../../shared/services/utils.service';
+
+// Workers
+import FileSystemWorker from '../web-workers/file-system?worker';
 
 export class FileSystemService {
+
+	// Holds handle references outside `populateDirectory` recursive scope so they can be GCd as the method runs
+	private static fileHandles = {}
+	private static directoryHandles = {}
+
 	/**
 	 * This method recursively maps all directories and files under a given directory.
 	 */
@@ -28,8 +37,13 @@ export class FileSystemService {
 			if (entry.kind === 'file') {
 				directory.files[entry.name] = entry;
 			} else if (entry.kind === 'directory') {
+				if (entry.name === '') {
+					continue;
+				}
+
 				if (recursive) {
 					directory.directories[entry.name] = await this.getDirectory(entry, recursive, entry.name, parentHandle || directoryHandle);
+					continue;
 				}
 
 				if (isModDirectory) {
@@ -49,6 +63,65 @@ export class FileSystemService {
 		}
 
 		return directory as Directory;
+	}
+
+	/**
+	 * Turns a <Directory> into an array of objects to create.
+	 * Arrays are easily chunkable and mean we don't have to rely on recursion
+	 * to populate later directories.
+	 */
+	public static getDirectoryArray(
+		directory: Directory | ZipContentDirectory,
+		path = directory.name,
+	): { directories: DirectoryArray[], files: FileArray[] } {
+		const output: { directories: DirectoryArray[], files: FileArray[] } = {
+			directories: [],
+			files: [],
+		}
+
+		const handleFile = (obj: FileArray) => {
+			output.files.push(obj);
+		}
+
+		const handleDirectory = (obj: DirectoryArray) => {
+			output.directories.push(obj);
+		}
+
+		const recurse = (
+			handle: Directory | ZipContentDirectory,
+			currentPath: string = '',
+			completeDirectoryPath: string = `${currentPath}/${handle.name}`
+		) => {
+			handleDirectory({
+				name: handle.name,
+				parentDirectoryPath: currentPath,
+				directoryPath: completeDirectoryPath,
+			});
+
+			const handleFiles = Object.values(handle.files);
+			const handleDirectories = Object.values(handle.directories);
+
+			if (handleFiles.length) {
+				for (const file of handleFiles) {
+					handleFile({
+						name: file.name,
+						// parentDirectoryPath: currentPath,
+						directoryPath: completeDirectoryPath,
+						handle: file,
+					});
+				}
+			}
+
+			if (handleDirectories.length) {
+				for (const childDirectory of handleDirectories) {
+					recurse(childDirectory, completeDirectoryPath);
+				}
+			}
+		}
+
+		recurse(directory, '', directory.name);
+
+		return output;
 	}
 
 	/**
@@ -86,50 +159,128 @@ export class FileSystemService {
 		});
 	}
 
+	public static async getHandles(directoryHandle: FileSystemDirectoryHandle): Promise<void> {
+		const handles = []
+
+		console.log(directoryHandle);
+
+		for (let i = 0; i < 5; i++) {
+			const file = await directoryHandle.getFileHandle(`handle${i}`, {create: true})
+			handles.push(file);
+			const label = `${performance.now()}`;
+			console.time(`${label}-creatStream`);
+			const stream = await file.createWritable({
+				keepExistingData: false,
+			});
+			console.timeEnd(`${label}-creatStream`);
+			console.time(`${label}-writeFile`);
+			await stream.write('hello');
+			console.timeEnd(`${label}-writeFile`);
+			console.time(`${label}-closeFile`);
+			await stream.close();
+			console.timeEnd(`${label}-closeFile`);
+		}
+	}
+
 	/**
 	 * This file populates a directory for either a fully qualified folder structure, or from a zip file
 	 */
-	public static async populateDirectory (parentHandle: FileSystemDirectoryHandle, directory: Directory): Promise<void>;
-	public static async populateDirectory (parentHandle: FileSystemDirectoryHandle, directory: ZipContentDirectory): Promise<void>;
-	public static async populateDirectory (parentHandle: FileSystemDirectoryHandle, directory: Directory | ZipContentDirectory): Promise<void> {
-		const newDirectoryHandle = await this.createDirectory(parentHandle, directory.name);
+	public static async populateDirectory(parentHandle: FileSystemDirectoryHandle, directory: Directory): Promise<void>;
+	public static async populateDirectory(parentHandle: FileSystemDirectoryHandle, directory: ZipContentDirectory): Promise<void>;
+	public static async populateDirectory(parentHandle: FileSystemDirectoryHandle, directory: Directory | ZipContentDirectory): Promise<void> {
+		//await this.populateDirectoryFiles(parentHandle, directory);
 
-		const fileCreations: Promise<any>[] = [];
-		const directoryCreations: Promise<any>[] = [];
+		const worker: Worker = new FileSystemWorker();
 
-		for (const [ fileName, file ] of Object.entries(directory.files)) {
-			const fileEntry = <FileSystemFileHandle | ZipFile>file;
+		worker.postMessage({
+			type: 'createDirectoryFiles',
+			parentHandle,
+			directoryToCreate: directory,
+		});
 
-			fileCreations.push(new Promise( async resolve => {
-				const fileHandle = await this.createFile(newDirectoryHandle, fileName);
-
-				const fileStream = await fileHandle.createWritable({
-					keepExistingData: false,
-				});
-
-				let contents: Blob;
-
-				if ((<ZipFile>fileEntry)?.content) {
-					contents = new Blob([(<ZipFile>fileEntry).content]);
-				} else if ((<FileSystemFileHandle>fileEntry)?.isFile) {
-					const fileToCopyHandle = await (<FileSystemFileHandle>fileEntry).getFile();
-					contents = new Blob([await fileToCopyHandle.text()]);
+		await new Promise(resolve => {
+			worker.onmessage = message => {
+				if (message.data === 'createDirectoryFiles:done') {
+					resolve();
 				}
+			};
+		});
 
-				await fileStream.write(contents);
-
-				await fileStream.close();
-
-				resolve();
-			}));
-		}
+		worker.terminate();
 
 		for (const childDirectory of Object.values(directory.directories)) {
-			directoryCreations.push(this.populateDirectory(newDirectoryHandle, childDirectory));
+			const handleId = performance.now();
+
+			this.directoryHandles[handleId] = await this.createDirectory(parentHandle, childDirectory.name);
+			await this.populateDirectory(this.directoryHandles[handleId], childDirectory);
+			this.directoryHandles[handleId] = null;
+		}
+	}
+
+	/**
+	 * This file populates a directory for either a fully qualified folder structure, or from a zip file
+	 */
+	public static async populateDirectoryArray(parentHandle: FileSystemDirectoryHandle, directory: Directory): Promise<void>;
+	public static async populateDirectoryArray(parentHandle: FileSystemDirectoryHandle, directory: ZipContentDirectory): Promise<void>;
+	public static async populateDirectoryArray(parentHandle: FileSystemDirectoryHandle, directory: Directory | ZipContentDirectory): Promise<void> {
+		console.log(directory);
+		const directoryArrays = this.getDirectoryArray(directory);
+
+		const chunkedDirectories = chunkArray(directoryArrays.directories, 10);
+		const chunkedFiles = chunkArray(directoryArrays.files, 20);
+
+		const directoryHandleMap: {[key: string]: FileSystemDirectoryHandle} = {}
+		console.log('Generating directories');
+
+		for (const directorySubArray of chunkedDirectories) {
+			for (const subDirectory of directorySubArray) {
+				const handle = await this.createDirectory(directoryHandleMap[subDirectory.parentDirectoryPath] || parentHandle, subDirectory.name);
+				directoryHandleMap[subDirectory.directoryPath] = handle;
+			}
 		}
 
-		await Promise.all(fileCreations);
-		await Promise.all(directoryCreations);
+		console.log('Generating files');
+		const worker: Worker = new FileSystemWorker();
+
+		for (const fileSubArray of chunkedFiles) {
+			const index = chunkedFiles.indexOf(fileSubArray);
+			console.log(`starting ${index}`)
+
+			const files: {
+				name: string;
+				contents: Blob;
+				parentHandle: FileSystemDirectoryHandle;
+			}[] = [];
+
+			for (const subFile of fileSubArray) {
+				files.push({
+					name: subFile.name,
+					contents: await this.getFileContents(subFile.handle),
+					parentHandle: directoryHandleMap[subFile.directoryPath],
+				});
+			}
+
+			worker.postMessage({
+				type: 'createDirectoryFile',
+				payload: files,
+			});
+
+			await new Promise(resolve => {
+				worker.onmessage = message => {
+					if (message.data === 'createDirectoryFile:done') {
+						resolve();
+					}
+				};
+			});
+
+			await new Promise(resolve => setTimeout(() => resolve(), 150)); // Trying to force GC
+
+			console.log(`finshed ${index}`)
+		}
+
+		worker.terminate();
+
+		console.log('generated files')
 	}
 
 	/**
@@ -138,9 +289,11 @@ export class FileSystemService {
 	public static async copyFolder(directoryToCopy: FileSystemDirectoryHandle, destination: FileSystemDirectoryHandle, folderName: string): Promise<void> {
 		const fullDirectoryToCopy = await this.getDirectory(directoryToCopy, true);
 
-		const newFolderHandle = await this.createDirectory(destination, folderName);
+		fullDirectoryToCopy.name = folderName;
 
-		this.populateDirectory(newFolderHandle, fullDirectoryToCopy);
+		// const newFolderHandle = await this.createDirectory(destination, folderName);
+
+		await this.populateDirectoryArray(destination, fullDirectoryToCopy);
 	}
 
 	/**
@@ -161,5 +314,34 @@ export class FileSystemService {
 
 	public static async addFolder(directoryhandle, directoryHandleToAdd): Promise<void> {
 		// Todo
+	}
+
+	/**
+	 * Requests write permission in a given directory
+	 */
+	public static async requestPermission(
+		directoryHandle: FileSystemDirectoryHandle,
+		mode: 'read' | 'readwrite' = 'readwrite',
+	): Promise<void> {
+		await directoryHandle.requestPermission({
+			mode,
+		});
+	}
+
+	private static async getFileContents(file: FileSystemFileHandle): Promise<Blob>;
+	private static async getFileContents(file: ZipFile): Promise<Blob>;
+	private static async getFileContents(file: FileSystemFileHandle | ZipFile): Promise<Blob> {
+		let contents: Blob;
+		console.log(file);
+
+		if ((<ZipFile>file)?.content) {
+			contents = new Blob([(<ZipFile>file).content]);
+		} else if ((<FileSystemFileHandle>file)?.kind === 'file') {
+			const fileToCopyHandle = await (<FileSystemFileHandle>file).getFile();
+			console.log(fileToCopyHandle, await fileToCopyHandle.text())
+			contents = new Blob([await fileToCopyHandle.text()]);
+		}
+
+		return contents;
 	}
 }
