@@ -118,6 +118,7 @@
 			.panel {
 				&:first-child {
 					margin-right: 1.5rem;
+					max-width: 66%;
 				}
 			}
 		}

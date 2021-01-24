@@ -104,25 +104,33 @@ onmessage = async (payload: Message): Promise<void> => {
 			for (const fileToCreate of <DirectoryFile[]>payload.data.payload) {
 				promises.push(new Promise(async resolve => {
 					const { name, contents, parentHandle } = <DirectoryFile>fileToCreate;
-					console.log(`creating ${ name }`)
+					// console.log(`creating ${ name }`)
 					const label = `${performance.now()}`;
 					console.time(label);
 
 					let fileHandle = await getFile(parentHandle, name, true);
 
-					const fileStream = await fileHandle.createWritable({
+					let fileStream = await fileHandle.createWritable({
 						keepExistingData: false,
 					});
 
-					console.log(parentHandle, name, contents, fileStream);
+					// console.log(parentHandle, name, contents, fileStream);
 
+					// console.time(`writing ${name}`);
 					await fileStream.write(contents);
+					// console.timeEnd(`writing ${name}`);
 
+					// console.time(`closing ${name}`);
+					// console.log(fileStream.__proto__, JSON.stringify(fileStream), fileStream.close);
 					await fileStream.close();
+					// console.timeEnd(`closing ${name}`);
 
 					console.timeEnd(label);
 
-					console.log(`created ${ name }`, fileHandle);
+					// console.log(`created ${ name }`, fileHandle);
+
+					fileHandle = null;
+					fileStream = null
 
 					resolve();
 				}));

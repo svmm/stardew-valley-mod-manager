@@ -9,8 +9,11 @@ TODO:
 	- Make button icons global classes or something [Done]
 	- Progress bar for installing zip mods
 	- Alert messages, alert message when mod finishes uploading
-	- Refresh after uploading zip
+	- Refresh after uploading zip [Done]
 	- look into @transcend-io/conflux for reading zip files
+	- Store handle for chosen directory so the user doesn't have to choose it every time
+		- Look into dexie js
+	- Use the activate profile for the user's current profile. AKA the folder without a leading period
 
 Features
 	- Download straight from Nexus
@@ -23,7 +26,6 @@ Features
 	- Marking installed mods as inactive [MVP] - This will pretty much just be part of the profiles work
 	- FAQ / Support page [MVP]
 	- Nice Tour feature
-	- Store handle for chosen directory so the user doesn't have to choose it every time
 
 	Creating mod feature
 		We can use the xnbcli code to create a feature whereby people can easily package and create mods using a web gui.

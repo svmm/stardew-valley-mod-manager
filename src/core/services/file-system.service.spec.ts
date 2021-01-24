@@ -167,6 +167,44 @@ describe('FileSystemService', () => {
 
 			expect(directory.directories.storage.directories.assets.directories).toEqual({});
 		});
+
+		it('Grandchildren should have their parent as their parentDirectory', async () => {
+			const directoryHandle = directoryHandleStub('parent', [
+				directoryHandleStub('profileFolder', [
+					directoryHandleStub('mod'),
+				]),
+			]);
+
+			const directory = await FileSystemService.getDirectory(directoryHandle);
+
+			expect(directory.directories.profileFolder.directories.mod.parentHandle.name).toBe('profileFolder');
+		});
+
+		it('Great grandchildren should have their parent as their parentDirectory', async () => {
+			const directoryHandle = directoryHandleStub('parent', [
+				directoryHandleStub('profileFolder', [
+					directoryHandleStub('subProfileFolder', [
+						directoryHandleStub('mod'),
+					]),
+				]),
+			]);
+
+			const directory = await FileSystemService.getDirectory(directoryHandle);
+
+			expect(directory.directories.profileFolder.directories.subProfileFolder.directories.mod.parentHandle.name).toBe('subProfileFolder');
+		});
+
+		it('Child directories should have the parent as their parentDirectory', async () => {
+			const directoryHandle = directoryHandleStub('parent', [
+				directoryHandleStub('profileFolder', [
+					directoryHandleStub('mod'),
+				]),
+			]);
+
+			const directory = await FileSystemService.getDirectory(directoryHandle);
+
+			expect(directory.directories.profileFolder.parentHandle.name).toBe('parent');
+		});
 	});
 
 	describe('getDirectoryArray', () => {

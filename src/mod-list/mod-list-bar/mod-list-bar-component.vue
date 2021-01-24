@@ -12,7 +12,7 @@
 		<button
 			@click="uploadZipFile"
 			class="btn mod-list-bar-btn"
-			:class="{disabled: !modDirectory}"
+			:class="{disabled: !modDirectory || !currentProfileName}"
 			:disabled="!modDirectory"
 		>
 			<i class="btn-icon plus"></i>
@@ -22,6 +22,8 @@
 </template>
 
 <script lang="ts">
+	import { computed } from 'vue';
+
 	// Services
 	import { ZipService, ZipContentDirectory } from '../../core/services/zip.service';
 	import { FileSystemService } from '../../core/services/file-system.service';
@@ -31,14 +33,10 @@
 	export default {
 		name: 'mod-list-bar',
 		setup() {
+			const currentProfile = computed(() => ModService.currentProfile.value);
+
 			const uploadZipFile = async () => {
-				const directory = ModService.modDirectory.value;
-
-				// const destinationDirectory = await FileSystemService.createDirectory(directory.handle, 'test')
-
-				// await FileSystemService.getHandles(destinationDirectory);
-
-				// return;
+				const currentProfile = ModService.currentProfile;
 
 				try {
 					const [ chosenZipFile ] = await window.showOpenFilePicker({
@@ -52,25 +50,13 @@
 						// ],
 					});
 
-					// await FileSystemService.getHandles(directory.handle);
-
 					const zipFile = await chosenZipFile.getFile();
-
-					// await FileSystemService.requestPermission(directory.handle);
 
 					const zipFolder = await ZipService.extract(zipFile);
 
-					console.log('done unzipping')
-
 					zipFolder.name = zipFile.name.split('.')[0];
 
-					// const destinationDirectory = await FileSystemService.createDirectory(directory.handle, zipFolder.name)
-
-					console.log('created directory');
-
-					await FileSystemService.populateDirectoryArray(directory.handle, zipFolder);
-
-					console.log('done populating');
+					await FileSystemService.populateDirectoryArray(currentProfile.value.directory, zipFolder);
 
 					await ModService.getMods();
 				} catch (e) {
@@ -82,6 +68,7 @@
 				getMods: () => ModService.getMods(),
 				uploadZipFile,
 				modDirectory: ModService.modDirectory,
+				currentProfileName: ModService.currentProfileName,
 			}
 		},
 	}

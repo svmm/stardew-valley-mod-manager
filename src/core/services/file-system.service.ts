@@ -42,7 +42,7 @@ export class FileSystemService {
 				}
 
 				if (recursive) {
-					directory.directories[entry.name] = await this.getDirectory(entry, recursive, entry.name, parentHandle || directoryHandle);
+					directory.directories[entry.name] = await this.getDirectory(entry, recursive, entry.name, directoryHandle);
 					continue;
 				}
 
@@ -58,7 +58,7 @@ export class FileSystemService {
 					continue;
 				}
 
-				directory.directories[entry.name] = await this.getDirectory(entry, recursive, entry.name, parentHandle || directoryHandle);
+				directory.directories[entry.name] = await this.getDirectory(entry, recursive, entry.name, directoryHandle);
 			}
 		}
 
@@ -223,14 +223,12 @@ export class FileSystemService {
 	public static async populateDirectoryArray(parentHandle: FileSystemDirectoryHandle, directory: Directory): Promise<void>;
 	public static async populateDirectoryArray(parentHandle: FileSystemDirectoryHandle, directory: ZipContentDirectory): Promise<void>;
 	public static async populateDirectoryArray(parentHandle: FileSystemDirectoryHandle, directory: Directory | ZipContentDirectory): Promise<void> {
-		console.log(directory);
 		const directoryArrays = this.getDirectoryArray(directory);
 
 		const chunkedDirectories = chunkArray(directoryArrays.directories, 10);
 		const chunkedFiles = chunkArray(directoryArrays.files, 20);
 
 		const directoryHandleMap: {[key: string]: FileSystemDirectoryHandle} = {}
-		console.log('Generating directories');
 
 		for (const directorySubArray of chunkedDirectories) {
 			for (const subDirectory of directorySubArray) {
@@ -239,12 +237,10 @@ export class FileSystemService {
 			}
 		}
 
-		console.log('Generating files');
 		const worker: Worker = new FileSystemWorker();
 
 		for (const fileSubArray of chunkedFiles) {
 			const index = chunkedFiles.indexOf(fileSubArray);
-			console.log(`starting ${index}`)
 
 			const files: {
 				name: string;
@@ -274,13 +270,9 @@ export class FileSystemService {
 			});
 
 			await new Promise(resolve => setTimeout(() => resolve(), 150)); // Trying to force GC
-
-			console.log(`finshed ${index}`)
 		}
 
 		worker.terminate();
-
-		console.log('generated files')
 	}
 
 	/**
@@ -291,9 +283,15 @@ export class FileSystemService {
 
 		fullDirectoryToCopy.name = folderName;
 
-		// const newFolderHandle = await this.createDirectory(destination, folderName);
-
 		await this.populateDirectoryArray(destination, fullDirectoryToCopy);
+	}
+
+	/**
+	 * Rename directory
+	 */
+	public static async renameFolder(directory: FileSystemDirectoryHandle, parentDirectory: FileSystemDirectoryHandle, folderName: string): Promise<void> {
+		await this.copyFolder(directory, parentDirectory, folderName);
+		await this.deleteFolder(parentDirectory, directory.name);
 	}
 
 	/**
@@ -332,13 +330,11 @@ export class FileSystemService {
 	private static async getFileContents(file: ZipFile): Promise<Blob>;
 	private static async getFileContents(file: FileSystemFileHandle | ZipFile): Promise<Blob> {
 		let contents: Blob;
-		console.log(file);
 
 		if ((<ZipFile>file)?.content) {
 			contents = new Blob([(<ZipFile>file).content]);
 		} else if ((<FileSystemFileHandle>file)?.kind === 'file') {
 			const fileToCopyHandle = await (<FileSystemFileHandle>file).getFile();
-			console.log(fileToCopyHandle, await fileToCopyHandle.text())
 			contents = new Blob([await fileToCopyHandle.text()]);
 		}
 

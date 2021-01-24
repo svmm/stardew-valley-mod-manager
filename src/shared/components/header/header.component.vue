@@ -7,7 +7,7 @@
 			<teleport to="#modals">
 				<modal name="changelog">
 					<h1>Changelog</h1>
-					<section id="v1.0">
+					<section id="v1_0">
 						<h2>v1.0 (It's a Big World Outside) 🔥</h2>
 						<ul>
 							<li>Adding mods from a zip file</li>

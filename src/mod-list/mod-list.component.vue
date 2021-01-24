@@ -37,6 +37,17 @@
 				</div>
 			</form>
 		</div>
+		<section class="section-no-things" id="no-profiles" v-if="modDirectory && !currentProfile">
+			<h2>Looks like you don't have any profiles yet!</h2>
+			<p>You can create a new profile in the navbar 👆</p>
+			<img src="/images/sprites/icons/junimo.png" alt="Oops!">
+		</section>
+		<section class="section-no-things" id="no-mods" v-if="modDirectory && currentProfile && !mods.length">
+			<h2>Looks like you don't have any mods installed!</h2>
+			<p>You can use the Upload button above to add a new mod!</p>
+			<p>Mods will also appear here if you place them into your profile folder.</p>
+			<img src="/images/sprites/icons/junimo.png" alt="Oops!">
+		</section>
 	</div>
 </template>
 
@@ -69,17 +80,26 @@
 			}
 
 			const modList = computed(() => {
-				return Object.values(ModService.mods.mods);
+				if (ModService.currentProfile.value) {
+					return Object.values(ModService.currentProfile.value.mods).sort();
+				}
+
+				return [];
 			});
 
 			const toggleMod = async (mod: Mod) => {
-				await ProfileService.toggleMod(mod);
+				await ModService.toggleMod(mod);
 			}
+
+			const currentProfile = computed(() => {
+				return ModService.currentProfile.value;
+			});
 
 			return {
 				mods: modList,
 				onDeleteMod,
 				toggleMod,
+				currentProfile,
 				modDirectory: ModService.modDirectory,
 			}
 		},
@@ -120,6 +140,18 @@
 					}
 				}
 			}
+		}
+	}
+
+	.section-no-things {
+		padding-top: 40px;
+
+		h2 {
+			font-size: 1.6rem;
+		}
+
+		img {
+			opacity: 0.5;
 		}
 	}
 </style>

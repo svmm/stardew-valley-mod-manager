@@ -36,4 +36,57 @@ describe('ModListService', () => {
 			expect(mods.mods['Hold to break gems'].files['manifest.json']).toBeDefined();
 		});
 	});
+
+	describe('sanitiseJson', () => {
+		it('Should return proper JSON with correct JSON', () => {
+			const json = `
+				{
+					"test": "test"
+				}
+			`;
+
+			const output = ModService.sanitiseJson(json);
+
+			expect(output).toBe(`{"test":"test"}`);
+		});
+
+		it('Should return proper JSON with 1 comma dangle', () => {
+			const json = `
+				{
+					"test": "test",
+				}
+			`;
+
+			const output = ModService.sanitiseJson(json);
+
+			expect(output).toBe(`{"test":"test"}`);
+		});
+
+		it('Should return proper JSON with 2 comma dangles', () => {
+			const json = `
+				{
+					"test": "test",
+					"test": "test",
+				}
+			`;
+
+			const output = ModService.sanitiseJson(json);
+
+			expect(output).toBe(`{"test":"test","test":"test"}`);
+		});
+
+		it('Should return proper JSON with nested dangle', () => {
+			const json = `
+				{
+					"test1": {
+						"test2": "test2",
+					}
+				}
+			`;
+
+			const output = ModService.sanitiseJson(json);
+
+			expect(output).toBe(`{"test1":{"test2":"test2"}}`);
+		});
+	});
 });
