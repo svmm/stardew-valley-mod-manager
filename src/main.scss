@@ -2,15 +2,15 @@
 
 @font-face {
 	font-family: 'Stardew Valley';
-	src: url('/public/fonts/pixel/Stardew Valley.woff') format('woff'),
-		 url('/public/fonts/pixel/Stardew Valley.ttf') format('truetype');
+	src: url('/fonts/pixel/Stardew Valley.woff') format('woff'),
+		 url('/fonts/pixel/Stardew Valley.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: 'Stardew Valley Wood';
-	src: url('/public/fonts/wood/Stardew Valley.woff') format('woff'),
-		 url('/public/fonts/wood/Stardew Valley.oet') format('eot'),
-		 url('/public/fonts/wood/Stardew Valley.svg') format('svg');
+	src: url('/fonts/wood/Stardew Valley.woff') format('woff'),
+		 url('/fonts/wood/Stardew Valley.eot') format('eot'),
+		 url('/fonts/wood/Stardew Valley.svg') format('svg');
 }
 
 $background-colour: #fbc571;
@@ -41,7 +41,7 @@ html, body {
 }
 
 .btn {
-	/* background: linear-gradient(to bottom, #fbc571, #fbbf62); */
+	// background: linear-gradient(to bottom, #fbc571, #fbbf62);
 	text-shadow: -1px 2px 0 rgba(0,0,0,0.2);
 	padding: 0.25rem 0.5rem;
 	border-radius: 3px;
@@ -80,7 +80,7 @@ a {
 
 input[type="checkbox"] {
 	appearance: none;
-	border: 2px solid #56160c;
+	border: 2px solid $text-colour;
 	border-radius: 6px;
 	padding: 10px;
 	background-color: transparent;
@@ -89,7 +89,7 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:checked {
-	background-color: #56160c;
+	background-color: $text-colour;
 }
 
 .panel {
@@ -128,6 +128,26 @@ button, a {
 	}
 }
 
+.cursor {
+	&-hover {
+		cursor: url('/images/sprites/cursor/hover.png'), auto;
+	}
+
+	&-active {
+		cursor: url('/images/sprites/cursor/active.png'), auto;
+	}
+}
+
 html, body {
 	font-size: 1.2rem;
+}
+
+input {
+	&[type="text"] {
+		border: 1px solid $text-colour;
+		border-radius: 5px;
+		background-color: transparent;
+		box-shadow: 0 0 2px rgba(0,0,0,0.2);
+		padding: 7px 10px;
+	}
 }

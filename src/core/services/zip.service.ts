@@ -1,9 +1,14 @@
+// import { Reader } from '@transcend-io/conflux';
+
+export interface ZipFile {
+	name: string;
+	content: any;
+}
+
 export interface ZipContentDirectory {
 	name: string;
 	files: {
-		[filePath: string]: {
-			content: any,
-		}
+		[filePath: string]: ZipFile,
 	};
 	directories: {
 		[directoryPath: string]: ZipContentDirectory,
@@ -11,6 +16,17 @@ export interface ZipContentDirectory {
 }
 
 export class ZipService {
+	// This uses Conflux. Need to look into more
+	// public static async read(zipData: Blob): Promise<ZipContentDirectory> {
+	// 	const entries = [];
+
+	// 	for await (const entry of Reader(zipData)) {
+	// 		entries.push(entry);
+	// 	}
+
+	// 	console.log(entries);
+	// }
+
 	public static extract(zipData: Blob): Promise<ZipContentDirectory> {
 		window.zip.workerScriptsPath = '/js/zip.js/';
 
@@ -86,12 +102,18 @@ export class ZipService {
 
 			const fileName = entry.filename.split('/').pop();
 
+			if (fileName === '') {
+				continue;
+			}
+
 			const nestedDirectory = getDirectory(path, entry.directory);
 
 			if (!entry.directory) {
 				let entryContent: string = await this.readEntryContent(entry);
+
 				nestedDirectory.files[fileName] = {
-					content: entryContent
+					name: fileName,
+					content: entryContent,
 				};
 			}
 		}
@@ -100,7 +122,7 @@ export class ZipService {
 	}
 
 	public static readEntryContent(entry: zip.Entry): Promise<string> {
-		return new Promise<string>((resolve, reject) => {
+		return new Promise<string>(resolve => {
 			let writer;
 
 			switch(entry.filename.split('.')[1]) {

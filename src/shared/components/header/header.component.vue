@@ -1,12 +1,13 @@
 <template>
 	<div class="header">
+		<profile-select></profile-select>
 		<div class="seperator"></div>
 		<button class="btn" @click="$modalService.showModal('changelog')">
 			v1.0
 			<teleport to="#modals">
 				<modal name="changelog">
 					<h1>Changelog</h1>
-					<section id="v1.0">
+					<section id="v1_0">
 						<h2>v1.0 (It's a Big World Outside) 🔥</h2>
 						<ul>
 							<li>Adding mods from a zip file</li>
@@ -26,9 +27,18 @@
 <script lang="ts">
 	import { defineComponent } from 'vue';
 
+	// Components
+	import ProfileSelectComponent from '../profile/profile-select.component.vue';
+
+	// Services
+	import { ProfileService } from '../profile/profile.service';
+
 	// Service
 	export default defineComponent({
 		name: 'svmm-header',
+		components: {
+			'profile-select': ProfileSelectComponent,
+		},
 	});
 </script>
 
@@ -36,7 +46,7 @@
 	.header {
 		height: 50px;
 		width: 100%;
-		padding: 5px 15px;
+		padding: 5px 40px;
 		background: #342E37;
 		background-image: url('/images/sprites/header/stars.png');
 		box-shadow: 0 2px 0 1px rgba(0,0,0,0.1);

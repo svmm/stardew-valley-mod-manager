@@ -9,8 +9,10 @@ module.exports = {
 	"transform": {
 		"^.+\\.(ts|tsx)$": "ts-jest",
 	},
+	"moduleFileExtensions": ["js", "ts", "?worker"],
 	"moduleNameMapper": {
 		"native-file-system-adapter": "<rootDir>/test/native-file-system-adapter.ts",
+		"\\?worker$": "<rootDir>/test/file-service-worker",
 	},
 	"globals": {
 		"ts-jest": {

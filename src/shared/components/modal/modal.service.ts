@@ -25,7 +25,8 @@ export class ModalService {
 
 	public addModal(name: string, controls: ModalControls): void {
 		if (this._modals[name]) {
-			throw new Error(`Modal ${ name } already exists`);
+			// throw new Error(`Modal ${ name } already exists`);
+			console.warn(`Modal ${ name } already exists`);
 		}
 
 		this._modals[name] = controls;

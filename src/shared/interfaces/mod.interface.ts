@@ -1,12 +1,15 @@
-import { FileWithRelativePath } from './directory.interface';
-
 export interface Mod {
 	name: string,
-	configFile: File, // File
-	manifestFile: File, // File
+	author: string;
+	version: string;
+	description: string;
+	configFile: FileSystemFileHandle,
+	manifestFile: FileSystemFileHandle,
 	files: {
-		[name: string]: FileWithRelativePath,
+		[name: string]: FileSystemFileHandle,
 	},
-	directoryHandle: any,
-	parentDirectoryHandle: any,
+	directoryHandle: FileSystemDirectoryHandle,
+	parentDirectoryHandle: FileSystemDirectoryHandle,
+	directoryName: string;
+	active: boolean;
 }

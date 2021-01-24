@@ -12,7 +12,13 @@
 					v-bind:key="mod.name"
 				>
 					<div class="controls pre-contols">
-						<input type="checkbox" :value="mod.name" :id="mod.name+'check'">
+						<input
+							@change.prevent="toggleMod(mod)"
+							type="checkbox"
+							:value="mod.name"
+							:id="mod.name+'check'"
+							:checked="mod.active"
+						>
 					</div>
 					<p class="mod-name">
 						<label :for="mod.name+'check'">
@@ -31,6 +37,17 @@
 				</div>
 			</form>
 		</div>
+		<section class="section-no-things" id="no-profiles" v-if="modDirectory && !currentProfile">
+			<h2>Looks like you don't have any profiles yet!</h2>
+			<p>You can create a new profile in the navbar 👆</p>
+			<img src="/images/sprites/icons/junimo.png" alt="Oops!">
+		</section>
+		<section class="section-no-things" id="no-mods" v-if="modDirectory && currentProfile && !mods.length">
+			<h2>Looks like you don't have any mods installed!</h2>
+			<p>You can use the Upload button above to add a new mod!</p>
+			<p>Mods will also appear here if you place them into your profile folder.</p>
+			<img src="/images/sprites/icons/junimo.png" alt="Oops!">
+		</section>
 	</div>
 </template>
 
@@ -38,8 +55,9 @@
 	import { defineComponent, SetupContext, computed, readonly } from 'vue';
 
 	// Services
-	import { useModsListService } from './mod-list.service';
+	import { ModListService } from './mod-list.service';
 	import { ModService } from '../core/services/mod.service';
+	import { ProfileService } from '../shared/components/profile/profile.service';
 
 	// Web workers
 	// import myWorker from '../core/web-workers/file-system.service?worker';
@@ -57,20 +75,31 @@
 			'mod-list-bar': ModListBarComponent,
 		},
 		setup() {
-			const { mods, deleteMod } = useModsListService();
-
-
 			const onDeleteMod = async (mod: Mod) => {
-				deleteMod(mod);
+				ModService.deleteMod(mod);
 			}
 
 			const modList = computed(() => {
-				return Object.values(mods.mods);
+				if (ModService.currentProfile.value) {
+					return Object.values(ModService.currentProfile.value.mods).sort();
+				}
+
+				return [];
+			});
+
+			const toggleMod = async (mod: Mod) => {
+				await ModService.toggleMod(mod);
+			}
+
+			const currentProfile = computed(() => {
+				return ModService.currentProfile.value;
 			});
 
 			return {
 				mods: modList,
 				onDeleteMod,
+				toggleMod,
+				currentProfile,
 				modDirectory: ModService.modDirectory,
 			}
 		},
@@ -79,7 +108,7 @@
 
 <style lang="scss" scoped>
 	.mod-table {
-		padding: 1rem 0;
+		padding-top: 1rem;
 
 		.mod {
 			display: flex;
@@ -98,6 +127,7 @@
 				margin: 0;
 				padding: 10px;
 				font-size: 1.5rem;
+				text-align: left;
 			}
 
 			.post-controls {
@@ -110,6 +140,18 @@
 					}
 				}
 			}
+		}
+	}
+
+	.section-no-things {
+		padding-top: 40px;
+
+		h2 {
+			font-size: 1.6rem;
+		}
+
+		img {
+			opacity: 0.5;
 		}
 	}
 </style>
