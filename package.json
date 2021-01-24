@@ -14,7 +14,7 @@
 		"@transcend-io/conflux": "^3.2.0",
 		"@types/jest": "^26.0.14",
 		"@types/zip.js": "^2.0.28",
-		"axios": "^0.20.0",
+		"axios": "^0.21.1",
 		"native-file-system-adapter": "^0.1.0",
 		"vue": "^3.0.5",
 		"vue-router": "^4.0.0-beta.9"
