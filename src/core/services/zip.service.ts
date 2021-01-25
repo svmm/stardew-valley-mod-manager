@@ -28,7 +28,7 @@ export class ZipService {
 	// }
 
 	public static extract(zipData: Blob): Promise<ZipContentDirectory> {
-		window.zip.workerScriptsPath = '/js/zip.js/';
+		window.zip.workerScriptsPath = '/stardew-valley-mod-manager/js/zip.js/';
 
 		return new Promise<ZipContentDirectory>((resolve, reject) => {
 			zip.createReader(
