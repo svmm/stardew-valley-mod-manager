@@ -3,10 +3,21 @@
 		<profile-select></profile-select>
 		<div class="seperator"></div>
 		<button class="btn" @click="$modalService.showModal('changelog')">
-			v1.0
+			v1.1
 			<teleport to="#modals">
-				<modal name="changelog">
-					<h1>Changelog</h1>
+				<modal name="changelog" id="changelog-modal">
+					<h1>Updates</h1>
+					<section id="v1_1">
+						<h2>v1.1</h2>
+						<ul>
+							<li>Fix a bug where you can't change profile if you're on the Default profile</li>
+							<li>Fixes a bug that wrongly named mod folders when enabling/disabling mods</li>
+							<li>Adds a message when viewing on mobile</li>
+							<li>Updates the app notice board and adds link to new wiki!</li>
+							<li>Adds a message to the mod list when you haven't chosen your app folder yet</li>
+							<li>Adds a favicon</li>
+						</ul>
+					</section>
 					<section id="v1_0">
 						<h2>v1.0 (It's a Big World Outside) 🔥</h2>
 						<ul>
@@ -93,5 +104,17 @@
 
 	.btn i.chicken {
 		background-image: url('/images/sprites/icons/blue_chicken.png');
+	}
+
+	#changelog-modal {
+		h1 {
+			margin-bottom: 1rem;
+			text-align: center;
+			font-size: 2.5rem;
+		}
+
+		h2 {
+			font-size: 1.8rem;
+		}
 	}
 </style>

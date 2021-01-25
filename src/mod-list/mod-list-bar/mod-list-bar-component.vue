@@ -1,7 +1,6 @@
 <template>
 	<div class="mod-list-bar">
 		<button class="mod-list-bar-btn" @click="getMods">
-			<i></i>
 			<span v-if="!modDirectory">Choose Folder</span>
 			<span v-else>Refresh</span>
 		</button>
@@ -116,6 +115,7 @@
 
 			span {
 				color: #fbc571;
+				width: 100%;
 			}
 		}
 
@@ -137,6 +137,7 @@
 			span {
 				color: #fbc571;
 				transition: color .2s ease;
+				width: 100%;
 
 				&.placeholder {
 					color: rgba(#fbc571, 60%);

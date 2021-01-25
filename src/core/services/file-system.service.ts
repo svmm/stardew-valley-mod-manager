@@ -159,7 +159,10 @@ export class FileSystemService {
 		});
 	}
 
-	public static async getHandles(directoryHandle: FileSystemDirectoryHandle): Promise<void> {
+	/**
+	 * This is a debug method for quickly generating lots of file handles to test browser performance.
+	 */
+	public static async DEBUG_getHandles(directoryHandle: FileSystemDirectoryHandle): Promise<void> {
 		const handles = []
 
 		console.log(directoryHandle);

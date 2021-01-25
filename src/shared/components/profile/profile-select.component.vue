@@ -95,7 +95,7 @@
 			}
 
 			const filteredProfiles = computed(() => {
-				return ModService.profiles.value.filter(profile => profile.name !== ModService.currentProfile.value.name);
+				return ModService.profiles.value.filter(profile => profile?.name !== ModService.currentProfile.value?.name);
 			});
 
 			return {

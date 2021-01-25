@@ -1,17 +1,28 @@
 <template>
 	<svmm-header />
 	<div class="container">
-		<div class="panel">
+		<div class="panel" id="town-notice-board">
 			<h1>Welcome to the Stardew Valley Mod Manager!</h1>
-			<p>Hello and welcome farmer! Check out the wiki if you're new here.</p>
+			<p>Hello farmer! Stay a while and look around!</p>
+			<a href="https://github.com/svmm/stardew-valley-mod-manager/wiki" target="_blank">Check out the wiki if you're new here.</a>
 		</div>
 	</div>
-	<div class="container space">
+	<div class="container space" id="desktop">
 		<div class="panel">
+			<h2>Mod list</h2>
 			<mod-list></mod-list>
 		</div>
-		<div class="panel">
+		<div class="panel" id="load-order">
 			<h2>Load Order</h2>
+			<img src="/images/sprites/icons/hat_mouse.png">
+			<p>This section is not ready yet, okay poke!</p>
+		</div>
+	</div>
+	<div class="container space" id="mobile">
+		<div class="panel">
+			<h2>Sorry!</h2>
+			<p>This app is not quite ready for mobile yet! It's best viewed on a desktop at the moment!</p>
+			<img src="/images/sprites/icons/emote_sad.png" alt="Not ready yet!">
 		</div>
 	</div>
 </template>
@@ -20,15 +31,10 @@
 	// Components
 	import ModListComponent from './mod-list/mod-list.component.vue';
 	import HeaderComponent from './shared/components/header/header.component.vue';
-	import ModalComponent from './shared/components/modal/modal.component.vue';
 
 	// Services
 	import { ZipService, ZipContentDirectory } from './core/services/zip.service';
 	import { ModService } from './core/services/mod.service';
-
-	import {
-		showOpenFilePicker,
-	} from 'native-file-system-adapter';
 
 	export default {
 		name: 'App',
@@ -116,6 +122,8 @@
 
 		&.space {
 			.panel {
+				max-width: 33%;
+
 				&:first-child {
 					margin-right: 1.5rem;
 					max-width: 66%;
@@ -128,7 +136,7 @@
 			flex-grow: 1;
 			text-align: center;
 
-			h1 {
+			h2 {
 				margin-bottom: 1rem;
 			}
 
@@ -144,6 +152,63 @@
 
 		button i {
 			background-image: url('/images/sprites/icons/blue_chicken.png');
+		}
+
+		#town-notice-board {
+			text-align: center;
+
+			a {
+				color: blue;
+				margin-top: 0.5rem;
+				display: block;
+			}
+		}
+	}
+
+	.panel#load-order {
+		img {
+			opacity: 0.7;
+			box-shadow: 0 0 5px rgba(0,0,0,0.5);
+		}
+
+		p {
+			opacity: 0.7;
+		}
+	}
+
+	#mobile {
+		.panel {
+			max-width: 100%;
+			margin-right: 0;
+
+			img {
+				margin-top: 1rem;
+			}
+		}
+	}
+
+	@media screen and (min-width: 100px) {
+		#desktop {
+			display: none;
+		}
+
+		#mobile {
+			display: block;
+
+			.panel {
+				max-width: 100%;
+				margin-right: 0;
+			}
+		}
+	}
+
+	@media screen and (min-width: 768px) {
+		#desktop {
+			display: flex;
+		}
+
+		#mobile {
+			display: none;
 		}
 	}
 </style>

@@ -106,7 +106,7 @@ onmessage = async (payload: Message): Promise<void> => {
 					const { name, contents, parentHandle } = <DirectoryFile>fileToCreate;
 					// console.log(`creating ${ name }`)
 					const label = `${performance.now()}`;
-					console.time(label);
+					// console.time(label);
 
 					let fileHandle = await getFile(parentHandle, name, true);
 
@@ -125,7 +125,7 @@ onmessage = async (payload: Message): Promise<void> => {
 					await fileStream.close();
 					// console.timeEnd(`closing ${name}`);
 
-					console.timeEnd(label);
+					// console.timeEnd(label);
 
 					// console.log(`created ${ name }`, fileHandle);
 

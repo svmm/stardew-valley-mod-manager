@@ -80,7 +80,7 @@
 			border-image: url('/images/sprites/modal/modal-border.png') 44 50 repeat;
 			border-image-outset: 15px;
 			border-image-width: 50px;
-			padding: 2rem;
+			padding: 0.75rem;
 			background: linear-gradient(to bottom, $modal-content-background-colour, $modal-content-background-colour-darkened) no-repeat;
 			box-shadow: 0 0 1px 6px rgba(0,0,0,0.2) inset;
 			margin: 0 2rem;
@@ -93,6 +93,7 @@
 			@media screen and (min-width: 768px) {
 				width: 50%;
 				margin: 0;
+				padding: 2rem;
 			}
 
 			.modal-inner {
