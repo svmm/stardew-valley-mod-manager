@@ -20,6 +20,7 @@ class ModServiceClass {
 	private readonly _profiles: Profiles = reactive({});
 
 	public profiles: ComputedRef<Profile[]> = computed(() => {
+		console.log(this._profiles);
 		return Object.values(this._profiles);
 	});
 
@@ -31,6 +32,7 @@ class ModServiceClass {
 	}
 
 	public currentProfile: ComputedRef<Profile> = computed(() => {
+		console.log('get', this._currentProfile.value, this._profiles[this._currentProfile.value])
 		if (this._profiles[this._currentProfile.value]) {
 			return this._profiles[this._currentProfile.value];
 		}
@@ -46,12 +48,13 @@ class ModServiceClass {
 	}
 
 	public setCurrentProfile(profile: Profile | string): void {
+		console.log('set', profile);
 		if (typeof profile === 'string') {
 			this._currentProfile.value = profile;
 			return;
 		}
 
-		this._currentProfile.value = profile.key;
+		this._currentProfile.value = profile.name;
 	}
 
 	public async getMods(): Promise<void> {
@@ -71,13 +74,15 @@ class ModServiceClass {
 
 		const sortedMods = await this.sortDirectoryIntoProfiles(modFolder);
 
-		let activeProfile = Object.values(sortedMods).find(profile => profile.active);
+		if (!this._currentProfile.value) {
+			let activeProfile = Object.values(sortedMods).find(profile => profile.active);
 
-		if (!activeProfile) {
-			activeProfile = Object.values(sortedMods)[0];
+			if (!activeProfile) {
+				activeProfile = Object.values(sortedMods)[0];
+			}
+
+			this.setCurrentProfile(activeProfile);
 		}
-
-		this.setCurrentProfile(activeProfile);
 
 		Object.assign(this._profiles, sortedMods);
 	}
@@ -142,7 +147,7 @@ class ModServiceClass {
 				active: true,
 				mods: parentLevelMods,
 				directory: parentDirectory.handle,
-				parentDirectory: null,
+				parentDirectory: parentDirectory.handle,
 			}
 		}
 
@@ -163,8 +168,8 @@ class ModServiceClass {
 				}
 			}
 
-			if (!profiles[profileFolderName]) {
-				profiles[profileFolderName] = {
+			if (!profiles[profileName]) {
+				profiles[profileName] = {
 					name: profileName,
 					key: profileFolderName,
 					active,
@@ -174,7 +179,7 @@ class ModServiceClass {
 				};
 			}
 
-			profiles[profileFolderName].mods = await checkDirectoryForMods(directory);
+			profiles[profileName].mods = await checkDirectoryForMods(directory);
 		}
 
 		return profiles;
@@ -182,8 +187,10 @@ class ModServiceClass {
 
 	public async createProfile(name: string): Promise<void> {
 		await FileSystemService.createDirectory(this.modDirectory.value.handle, name);
-		this.setCurrentProfile(name);
+
 		await this.getMods();
+
+		await this.setActiveProfile(this._profiles[name]);
 	}
 
 	public async deleteMod(mod: Mod): Promise<void> {
@@ -209,7 +216,7 @@ class ModServiceClass {
 			await FileSystemService.copyFolder(mod.directoryHandle, mod.parentDirectoryHandle, `.${ mod.directoryHandle.name }`);
 			this.setModActiveStatus(mod, false);
 		} else {
-			await FileSystemService.copyFolder(mod.directoryHandle, mod.parentDirectoryHandle, `${ mod.name }`);
+			await FileSystemService.copyFolder(mod.directoryHandle, mod.parentDirectoryHandle, mod.directoryHandle.name.substr(1));
 			this.setModActiveStatus(mod, true);
 		}
 
@@ -218,18 +225,44 @@ class ModServiceClass {
 	}
 
 	public async setActiveProfile(profile: Profile): Promise<void> {
-		console.log(profile);
+		if (profile.name === 'Default') {
+			this.setCurrentProfile(profile);
+
+			return;
+		}
+
+		if (this.currentProfile.value.name === 'Default') {
+			if (profile.key[0] === '.') {
+				await FileSystemService.renameFolder(profile.directory, profile.parentDirectory, profile.name);
+			}
+
+			const profilesToDisable = Object
+				.values(this.profiles.value)
+				.filter(profile => profile.name !== 'Default' && profile.key[0] !== '.');
+
+			await Promise.all(profilesToDisable.map(async profile => {
+				const directoryName = `.${profile.key}`;
+
+				return FileSystemService.renameFolder(profile.directory, profile.parentDirectory, directoryName);
+			}));
+
+			await this.getMods();
+
+			this.setCurrentProfile(profile);
+
+			return;
+		}
+
 		const currentProfileName = `.${ this.currentProfile.value.name }`;
-		console.log(currentProfileName);
 
 		await Promise.all([
-			await FileSystemService.renameFolder(this.currentProfile.value.directory, this.currentProfile.value.parentDirectory, currentProfileName),
-			await FileSystemService.renameFolder(profile.directory, profile.parentDirectory, profile.name),
+			FileSystemService.renameFolder(this.currentProfile.value.directory, this.currentProfile.value.parentDirectory, currentProfileName),
+			profile.key[0] === '.' ? FileSystemService.renameFolder(profile.directory, profile.parentDirectory, profile.name) : null,
 		]);
 
-		this.setCurrentProfile(profile);
-
 		await this.getMods();
+
+		this.setCurrentProfile(profile);
 	}
 
 	public sanitiseJson(json: string): string {

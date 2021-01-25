@@ -37,6 +37,11 @@
 				</div>
 			</form>
 		</div>
+		<section class="section-no-things" id="no-mod-directory" v-if="!modDirectory && !currentProfile">
+			<h2>Please choose your mod folder!</h2>
+			<p>Choose your mod folder above. This is main folder you want all your mods to be in!</p>
+			<img src="/images/sprites/icons/junimo.png" alt="Oops!">
+		</section>
 		<section class="section-no-things" id="no-profiles" v-if="modDirectory && !currentProfile">
 			<h2>Looks like you don't have any profiles yet!</h2>
 			<p>You can create a new profile in the navbar 👆</p>
@@ -55,15 +60,12 @@
 	import { defineComponent, SetupContext, computed, readonly } from 'vue';
 
 	// Services
-	import { ModListService } from './mod-list.service';
 	import { ModService } from '../core/services/mod.service';
-	import { ProfileService } from '../shared/components/profile/profile.service';
 
 	// Web workers
 	// import myWorker from '../core/web-workers/file-system.service?worker';
 
 	// Components
-	import ModalComponent from '../shared/components/modal/modal.component.vue';
 	import ModListBarComponent from './mod-list-bar/mod-list-bar-component.vue';
 
 	// Interfaces
