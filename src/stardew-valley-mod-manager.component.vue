@@ -36,10 +36,6 @@
 	import { ZipService, ZipContentDirectory } from './core/services/zip.service';
 	import { ModService } from './core/services/mod.service';
 
-	import {
-		showOpenFilePicker,
-	} from 'native-file-system-adapter';
-
 	export default {
 		name: 'App',
 		setup() {
