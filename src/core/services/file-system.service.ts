@@ -33,8 +33,6 @@ export class FileSystemService {
 
 		const isModDirectory = await this.getFile(directoryHandle, 'manifest.json');
 
-		debugger;
-
 		for await (const entry of directoryHandle.values()) {
 			if (entry.kind === 'file') {
 				directory.files[entry.name] = entry;

@@ -61,6 +61,7 @@
 
 	// Services
 	import { ModService } from '../core/services/mod.service';
+	import { ProfileService } from '../shared/components/profile/profile.service';
 
 	// Web workers
 	// import myWorker from '../core/web-workers/file-system.service?worker';
