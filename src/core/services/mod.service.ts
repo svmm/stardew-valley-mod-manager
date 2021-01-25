@@ -20,7 +20,6 @@ class ModServiceClass {
 	private readonly _profiles: Profiles = reactive({});
 
 	public profiles: ComputedRef<Profile[]> = computed(() => {
-		console.log(this._profiles);
 		return Object.values(this._profiles);
 	});
 
@@ -32,7 +31,6 @@ class ModServiceClass {
 	}
 
 	public currentProfile: ComputedRef<Profile> = computed(() => {
-		console.log('get', this._currentProfile.value, this._profiles[this._currentProfile.value])
 		if (this._profiles[this._currentProfile.value]) {
 			return this._profiles[this._currentProfile.value];
 		}
@@ -48,7 +46,6 @@ class ModServiceClass {
 	}
 
 	public setCurrentProfile(profile: Profile | string): void {
-		console.log('set', profile);
 		if (typeof profile === 'string') {
 			this._currentProfile.value = profile;
 			return;

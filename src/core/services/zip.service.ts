@@ -141,7 +141,7 @@ export class ZipService {
 					resolve(resultText);
 				},
 				(current: number, total: number) => {
-					console.debug(`${entry.filename}: ${current}/${total}B`);
+					// console.debug(`${entry.filename}: ${current}/${total}B`);
 				}
 			);
 		});
