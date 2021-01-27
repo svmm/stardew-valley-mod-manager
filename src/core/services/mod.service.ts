@@ -250,6 +250,10 @@ class ModServiceClass {
 			return;
 		}
 
+		if (this.currentProfile.value.name === profile.name) {
+			return;
+		}
+
 		const currentProfileName = `.${ this.currentProfile.value.name }`;
 
 		await Promise.all([

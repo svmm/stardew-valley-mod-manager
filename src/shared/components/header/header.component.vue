@@ -3,10 +3,16 @@
 		<profile-select></profile-select>
 		<div class="seperator"></div>
 		<button class="btn" @click="$modalService.showModal('changelog')">
-			v1.1
+			v1.2
 			<teleport to="#modals">
 				<modal name="changelog" id="changelog-modal">
 					<h1>Updates</h1>
+					<section id="v1_2">
+						<h2>v1.2</h2>
+						<ul>
+							<li>Fix a bug where if you have no profiles, the first you create won't be active</li>
+						</ul>
+					</section>
 					<section id="v1_1">
 						<h2>v1.1</h2>
 						<ul>
